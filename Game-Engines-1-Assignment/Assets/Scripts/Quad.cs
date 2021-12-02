@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class Quad
 {
-    public Mesh quadMesh;
+    public Mesh quadMesh; //  quad mesh that is used to create the voxel blocks.
 
     public Quad(MeshManager.BlockFace face, Vector3 offset, MeshManager.BlockType blockType)
     {
 
-        quadMesh = new Mesh();
-        quadMesh.name = "ScriptableQuad";
+        quadMesh = new Mesh(); 
+        
+        // Quads are made up of  vertex arrays,  normals  texture Coords(uvs) &  triangles.
 
         Vector3[] vertices = new Vector3[4];
         Vector3[] normals = new Vector3[4];
@@ -18,11 +19,13 @@ public class Quad
         int[] triangles = new int[6];
         triangles = new int[] { 3, 1, 0, 3, 2, 1 };
 
+        // UV Array
         Vector2 uv00 = MeshManager.blockUVs[(int)blockType, 0];
         Vector2 uv10 = MeshManager.blockUVs[(int)blockType, 1];
         Vector2 uv01 = MeshManager.blockUVs[(int)blockType, 2];
         Vector2 uv11 = MeshManager.blockUVs[(int)blockType, 3];
 
+        //Vertices Array
         Vector3 v0 = new Vector3(-0.5f, -0.5f, 0.5f) + offset;
         Vector3 v1 = new Vector3(0.5f, -0.5f, 0.5f) + offset;
         Vector3 v2 = new Vector3(0.5f, -0.5f, -0.5f) + offset;
@@ -93,12 +96,12 @@ public class Quad
         }
 
 
-        quadMesh.vertices = vertices;
-        quadMesh.normals = normals;
-        quadMesh.uv = uvs;
-        quadMesh.triangles = triangles;
+        quadMesh.vertices = vertices; // setting the quad vertices to the array that have been created
+        quadMesh.normals = normals; // setting the quad normals to the array that have been created
+        quadMesh.uv = uvs;  // setting the quad uvs to the array that have been created
+        quadMesh.triangles = triangles;  // setting the quad triangles to the array that have been created
 
-        quadMesh.RecalculateBounds();
+        quadMesh.RecalculateBounds(); //  finding the new limits of each quad mesh created.
 
 
 

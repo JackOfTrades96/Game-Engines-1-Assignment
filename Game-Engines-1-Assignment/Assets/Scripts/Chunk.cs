@@ -10,12 +10,23 @@ public class Chunk : MonoBehaviour
 {
     public Material Textures;
 
+    // Chunk(width,height,depth)(16x256x16)
     public int chunkWidth = 16;
     public int chunkHeight = 256;
     public int chunkDepth = 2;
 
+    //Perlin Settings
+    public float heightScale = 10;
+    public float scale = 0.001f;
+    public int ocatves = 8;
+    public float heightOffset = -33;
+
+    // chunk position within world space
+     public Vector3 chunkPosition;
+
+
     public Block[,,] blocks;
-    //Flat[x + WIDTH * (y + DEPTH * z)] = Original[x, y, z]
+    //Flat[x + chunkwidth * (y + chunkHeight * z)] = [x, y, z]
     public MeshManager.BlockType[] chunkData;
 
     void BuildChunk()
@@ -24,20 +35,29 @@ public class Chunk : MonoBehaviour
         chunkData = new MeshManager.BlockType[blockCount];
         for (int i = 0; i < blockCount; i++)
         {
-            int x = i % chunkWidth;
-            int y = i / chunkWidth % chunkHeight;
-            int z = i / (chunkWidth * chunkHeight);
+            int x = i % chunkWidth + (int) chunkPosition.x;
+            int y = i / chunkWidth % chunkHeight + (int) chunkPosition.y;
+            int z = i / (chunkWidth * chunkHeight) + (int) chunkPosition.z;
 
-           if(MeshManager.fBm(x,z,8,0.001f,10,-33) > y) // FractcallBrowningMethod(x,y,octaves,Scale,HeightScale,HeightOffset) >y)
+           if(MeshManager.fBm(x,z,ocatves,scale,heightScale,heightOffset) > y) // FractcallBrowningMethod(x,y,octaves,Scale,HeightScale,HeightOffset) >y)
                 chunkData[i] = MeshManager.BlockType.Dirt;
             else
                 chunkData[i] = MeshManager.BlockType.Air;
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
+     void Start()
     {
+        
+    }
+
+      public void CreateChunk(Vector3 dimensions, Vector3 position)
+    {
+        chunkWidth = (int)dimensions.x;
+        chunkHeight = (int)dimensions.y;
+        chunkDepth = (int)dimensions.z;
+        chunkPosition = position;
+
         MeshFilter mf = this.gameObject.AddComponent<MeshFilter>();
         MeshRenderer mr = this.gameObject.AddComponent<MeshRenderer>();
         mr.material = Textures;
@@ -60,7 +80,7 @@ public class Chunk : MonoBehaviour
             {
                 for (int x = 0; x < chunkWidth; x++)
                 {
-                    blocks[x, y, z] = new Block(new Vector3(x, y, z), chunkData[x +  chunkWidth * (y + chunkDepth * z)], this);
+                    blocks[x, y, z] = new Block(new Vector3(x, y, z) + chunkPosition, chunkData[x +  chunkWidth * (y + chunkDepth * z)], this);
                     if (blocks[x, y, z].mesh != null)
                     {
                         inputMeshes.Add(blocks[x, y, z].mesh);
@@ -87,7 +107,6 @@ public class Chunk : MonoBehaviour
 
         var handle = jobs.Schedule(inputMeshes.Count, 4);
         var newMesh = new Mesh();
-        newMesh.name = "Chunk";
         var sm = new SubMeshDescriptor(0, triStart, MeshTopology.Triangles);
         sm.firstVertex = 0;
         sm.vertexCount = vertexStart;

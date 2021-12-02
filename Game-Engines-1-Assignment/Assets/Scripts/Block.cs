@@ -11,28 +11,29 @@ public class Block
     public Block(Vector3 offset, MeshManager.BlockType blocktype, Chunk chunk)
     {
         parentChunk = chunk;
+        Vector3 blockLocalPosition = offset - chunk.chunkPosition;
 
         if (blocktype != MeshManager.BlockType.Air)
         {
             List<Quad> quads = new List<Quad>();
 
-            if (!HasSolidNeighbour((int)offset.x, (int)offset.y + 1, (int)offset.z))
-                quads.Add(new Quad(MeshManager.BlockFace.Top, offset, blocktype));
+            if (!HasSolidNeighbour((int)offset.x, (int)blockLocalPosition.y + 1, (int)blockLocalPosition.z))
+                quads.Add(new Quad(MeshManager.BlockFace.Top, blockLocalPosition, blocktype));
 
-            if (!HasSolidNeighbour((int)offset.x, (int)offset.y - 1, (int)offset.z))
-                quads.Add(new Quad(MeshManager.BlockFace.Bottom, offset, blocktype));
+            if (!HasSolidNeighbour((int)offset.x, (int)blockLocalPosition.y - 1, (int)blockLocalPosition.z))
+                quads.Add(new Quad(MeshManager.BlockFace.Bottom, blockLocalPosition, blocktype));
 
-            if (!HasSolidNeighbour((int)offset.x, (int)offset.y, (int)offset.z + 1))
-                quads.Add(new Quad(MeshManager.BlockFace.Front, offset, blocktype));
+            if (!HasSolidNeighbour((int)offset.x, (int)blockLocalPosition.y, (int)blockLocalPosition.z + 1))
+                quads.Add(new Quad(MeshManager.BlockFace.Front, blockLocalPosition, blocktype));
 
-            if (!HasSolidNeighbour((int)offset.x, (int)offset.y, (int)offset.z - 1))
-                quads.Add(new Quad(MeshManager.BlockFace.Back, offset, blocktype));
+            if (!HasSolidNeighbour((int)offset.x, (int)blockLocalPosition.y, (int)blockLocalPosition.z - 1))
+                quads.Add(new Quad(MeshManager.BlockFace.Back, blockLocalPosition, blocktype));
 
-            if (!HasSolidNeighbour((int)offset.x - 1, (int)offset.y, (int)offset.z))
-                quads.Add(new Quad(MeshManager.BlockFace.Left, offset, blocktype));
+            if (!HasSolidNeighbour((int)offset.x - 1, (int)blockLocalPosition.y, (int)blockLocalPosition.z))
+                quads.Add(new Quad(MeshManager.BlockFace.Left, blockLocalPosition, blocktype));
 
-            if (!HasSolidNeighbour((int)offset.x + 1, (int)offset.y, (int)offset.z))
-                quads.Add(new Quad(MeshManager.BlockFace.Right, offset, blocktype));
+            if (!HasSolidNeighbour((int)offset.x + 1, (int)blockLocalPosition.y, (int)blockLocalPosition.z))
+                quads.Add(new Quad(MeshManager.BlockFace.Right, blockLocalPosition, blocktype));
            
            
 
