@@ -2,15 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Quad 
+public class Quad
 {
     public Mesh quadMesh;
+
     public Quad(MeshManager.BlockFace face, Vector3 offset, MeshManager.BlockType blockType)
     {
-        
+
         quadMesh = new Mesh();
         quadMesh.name = "ScriptableQuad";
-       
 
         Vector3[] vertices = new Vector3[5];
         Vector3[] normals = new Vector3[4];
@@ -23,7 +23,6 @@ public class Quad
         Vector2 uv01 = MeshManager.blockUVs[(int)blockType, 2];
         Vector2 uv11 = MeshManager.blockUVs[(int)blockType, 3];
 
-
         Vector3 v0 = new Vector3(-0.5f, -0.5f, 0.5f) + offset;
         Vector3 v1 = new Vector3(0.5f, -0.5f, 0.5f) + offset;
         Vector3 v2 = new Vector3(0.5f, -0.5f, -0.5f) + offset;
@@ -33,7 +32,7 @@ public class Quad
         Vector3 v6 = new Vector3(0.5f, 0.5f, -0.5f) + offset;
         Vector3 v7 = new Vector3(-0.5f, 0.5f, -0.5f) + offset;
 
-        switch(face)
+        switch (face)
         {
 
             case MeshManager.BlockFace.Top:
@@ -56,22 +55,22 @@ public class Quad
 
 
             case MeshManager.BlockFace.Front:
-             {
-               vertices = new Vector3[] { v4, v5, v1, v0 };
-               normals = new Vector3[] { Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward };
-               uvs = new Vector2[] { uv11, uv01, uv00, uv10 }; 
-               break;
+                {
+                    vertices = new Vector3[] { v4, v5, v1, v0 };
+                    normals = new Vector3[] { Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward };
+                    uvs = new Vector2[] { uv11, uv01, uv00, uv10 };
+                    break;
 
-             }
+                }
 
             case MeshManager.BlockFace.Back:
-             {
-               vertices = new Vector3[] { v6, v7, v3, v2 };
-               normals = new Vector3[] { Vector3.back, Vector3.back, Vector3.back , Vector3.back};
-               uvs = new Vector2[] { uv11, uv01, uv00, uv10 };
-               break;
+                {
+                    vertices = new Vector3[] { v6, v7, v3, v2 };
+                    normals = new Vector3[] { Vector3.back, Vector3.back, Vector3.back, Vector3.back };
+                    uvs = new Vector2[] { uv11, uv01, uv00, uv10 };
+                    break;
 
-             }
+                }
 
             case MeshManager.BlockFace.Left:
                 {
@@ -93,7 +92,7 @@ public class Quad
 
         }
 
-        
+
         quadMesh.vertices = vertices;
         quadMesh.normals = normals;
         quadMesh.uv = uvs;
@@ -101,13 +100,10 @@ public class Quad
 
         quadMesh.RecalculateBounds();
 
-       
+
+
 
     }
 
-    
-    void Update()
-    {
-        
-    }
 }
+

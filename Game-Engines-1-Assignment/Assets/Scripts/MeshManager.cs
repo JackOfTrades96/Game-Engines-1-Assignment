@@ -3,92 +3,90 @@ using System.Collections.Generic;
 using UnityEngine;
 using VertexData = System.Tuple<UnityEngine.Vector3, UnityEngine.Vector3, UnityEngine.Vector2>;
 
-public static class MeshManager 
+public static class MeshManager
 {
-    public enum BlockFace
-    {
-        Top,
-        Bottom,
-        Front,
-        Back,
-        Left,
-        Right
-    }
     public enum BlockType
     {
-        GrassTop,
-        Dirt,
-        Sand,
+        GrassTop, GrassSide, Dirt, Water, Stone, Sand, Air
     };
 
-    public static Vector2[,] blockUVs =
+    public enum BlockFace { Top, Bottom, Front, Back, Left, Right };
+
+    public static Vector2[,] blockUVs = {
+        /*GRASSTOP*/ {  new Vector2(0.125f, 0.375f), new Vector2(0.1875f,0.375f),
+                        new Vector2(0.125f, 0.4375f), new Vector2(0.1875f,0.4375f) },
+        /*GRASSSIDE*/ { new Vector2( 0.1875f, 0.9375f ), new Vector2( 0.25f, 0.9375f),
+                        new Vector2( 0.1875f, 1.0f ),new Vector2( 0.25f, 1.0f )},
+        /*DIRT*/	  { new Vector2( 0.125f, 0.9375f ), new Vector2( 0.1875f, 0.9375f),
+                        new Vector2( 0.125f, 1.0f ),new Vector2( 0.1875f, 1.0f )},
+        /*WATER*/	  { new Vector2(0.875f,0.125f),  new Vector2(0.9375f,0.125f),
+                        new Vector2(0.875f,0.1875f), new Vector2(0.9375f,0.1875f)},
+        /*STONE*/	  { new Vector2( 0, 0.875f ), new Vector2( 0.0625f, 0.875f),
+                        new Vector2( 0, 0.9375f ),new Vector2( 0.0625f, 0.9375f )},
+        /*SAND*/	  { new Vector2(0.125f,0.875f),  new Vector2(0.1875f,0.875f),
+                        new Vector2(0.125f,0.9375f), new Vector2(0.1875f,0.9375f)}
+    };
+
+    public static float fBm(float x, float z, int octaves, float Scale, float heightScale, float heightoffset)
     {
-
-        /*GrassTop*/
+        float total = 0;
+        float frequency = 1;
+        for (int i = 0; i < octaves; i++)
         {
-            new Vector2(0.125f,0.375f),new Vector2(0.1875f,0.375f), new Vector2(0.125f,0.4375f), new Vector2(0.1875f,0.4375f)
-        },
+            total += Mathf.PerlinNoise(x * Scale * frequency, z * Scale * frequency) * heightScale;
+            frequency *= 2;
+        }
+        return total + heightoffset;
+    }
 
-        /*Sand*/
-        {
-            new Vector2(0.125f,0.875f),new Vector2(0.1875f,0.875f), new Vector2(0.125f,0.9375f), new Vector2(0.1875f,0.9375f)
-        },
-
-         /*Sand*/
-        {
-            new Vector2(0.125f,0.875f),new Vector2(0.1875f,0.875f), new Vector2(0.125f,0.9375f), new Vector2(0.1875f,0.9375f)
-        },
-
-    };
 
     public static Mesh MergeMeshes(Mesh[] meshes)
     {
-        Mesh Blockmesh = new Mesh();
+        Mesh mesh = new Mesh();
 
-        Dictionary<VertexData, int> vertexOrder = new Dictionary<VertexData, int>();
-        HashSet<VertexData> vertexHash = new HashSet<VertexData>();
-        List<int> triangles = new List<int>();
+        Dictionary<VertexData, int> pointsOrder = new Dictionary<VertexData, int>();
+        HashSet<VertexData> pointsHash = new HashSet<VertexData>();
+        List<int> tris = new List<int>();
 
-        int vertexIndex = 0;
-        for(int i =0; i < meshes.Length; i++)
+        int pIndex = 0;
+        for (int i = 0; i < meshes.Length; i++) //loop through each mesh
         {
             if (meshes[i] == null) continue;
-            for (int j =  0; j < meshes[i].vertices.Length; j++)
+            for (int j = 0; j < meshes[i].vertices.Length; j++) //loop through each vertex of the current mesh
             {
-                Vector3 vertices = meshes[i].vertices[j];
-                Vector3 normals = meshes[i].normals[j];
-                Vector2 uvs = meshes[i].uv[j];
-                VertexData vertex = new VertexData(vertices, normals, uvs);
-
-                if(!vertexHash.Contains(vertex))
+                Vector3 v = meshes[i].vertices[j];
+                Vector3 n = meshes[i].normals[j];
+                Vector2 u = meshes[i].uv[j];
+                VertexData p = new VertexData(v, n, u);
+                if (!pointsHash.Contains(p))
                 {
-                    vertexOrder.Add(vertex, vertexIndex);
-                    vertexHash.Add(vertex);
+                    pointsOrder.Add(p, pIndex);
+                    pointsHash.Add(p);
 
-                    vertexIndex++;
+                    pIndex++;
                 }
+
             }
 
-            for (int t = 0;  t<meshes[i].triangles.Length; t ++)
+            for (int t = 0; t < meshes[i].triangles.Length; t++)
             {
-                int trianglePoint = meshes[i].triangles[t];
-                Vector3 vertices = meshes[i].vertices[trianglePoint];
-                Vector3 normals = meshes[i].normals[trianglePoint];
-                Vector2 uvs = meshes[i].uv[trianglePoint];
-                VertexData vertex = new VertexData(vertices, normals, uvs);
+                int triPoint = meshes[i].triangles[t];
+                Vector3 v = meshes[i].vertices[triPoint];
+                Vector3 n = meshes[i].normals[triPoint];
+                Vector2 u = meshes[i].uv[triPoint];
+                VertexData p = new VertexData(v, n, u);
 
                 int index;
-                vertexOrder.TryGetValue(vertex, out index);
-                triangles.Add(index);
+                pointsOrder.TryGetValue(p, out index);
+                tris.Add(index);
             }
-
             meshes[i] = null;
         }
 
-        ExtractArrays(vertexOrder, Blockmesh);
-        Blockmesh.triangles = triangles.ToArray();
-        Blockmesh.RecalculateBounds();
-        return Blockmesh;
+        ExtractArrays(pointsOrder, mesh);
+        mesh.triangles = tris.ToArray();
+        mesh.RecalculateBounds();
+        return mesh;
     }
 
     public static void ExtractArrays(Dictionary<VertexData, int> list, Mesh mesh)
@@ -97,15 +95,15 @@ public static class MeshManager
         List<Vector3> norms = new List<Vector3>();
         List<Vector2> uvs = new List<Vector2>();
 
-        foreach(VertexData vertex in list.Keys)
+        foreach (VertexData v in list.Keys)
         {
-            verts.Add(vertex.Item1);
-            norms.Add(vertex.Item2);
-            uvs.Add(vertex.Item3);
+            verts.Add(v.Item1);
+            norms.Add(v.Item2);
+            uvs.Add(v.Item3);
         }
-
         mesh.vertices = verts.ToArray();
         mesh.normals = norms.ToArray();
         mesh.uv = uvs.ToArray();
     }
+
 }
