@@ -35,7 +35,7 @@ public class Quad
         Vector3 v6 = new Vector3(0.5f, 0.5f, -0.5f) + offset;
         Vector3 v7 = new Vector3(-0.5f, 0.5f, -0.5f) + offset;
 
-        switch (face)
+        switch (face) // switch statemnet creates  the 6 quads that form each voxel Block (Top,Bottom, Front, Back, Left, Right)
         {
 
             case MeshManager.BlockFace.Top:

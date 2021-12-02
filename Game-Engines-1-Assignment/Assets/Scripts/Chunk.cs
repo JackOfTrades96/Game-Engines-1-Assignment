@@ -39,7 +39,7 @@ public class Chunk : MonoBehaviour
             int y = i / chunkWidth % chunkHeight + (int) chunkPosition.y;
             int z = i / (chunkWidth * chunkHeight) + (int) chunkPosition.z;
 
-           if(MeshManager.fBm(x,z,ocatves,scale,heightScale,heightOffset) > y) // FractcallBrowningMethod(x,y,octaves,Scale,HeightScale,HeightOffset) >y)
+           if(MeshManager.fBm(x ,z , ocatves, scale, heightScale, heightOffset) > y) // FractcallBrowningMethod(x,y,octaves,Scale,HeightScale,HeightOffset) >y)
                 chunkData[i] = MeshManager.BlockType.Dirt;
             else
                 chunkData[i] = MeshManager.BlockType.Air;
@@ -53,10 +53,12 @@ public class Chunk : MonoBehaviour
 
       public void CreateChunk(Vector3 dimensions, Vector3 position)
     {
-        chunkWidth = (int)dimensions.x;
-        chunkHeight = (int)dimensions.y;
-        chunkDepth = (int)dimensions.z;
         chunkPosition = position;
+
+        chunkWidth = (int) dimensions.x;
+        chunkHeight = (int) dimensions.y;
+        chunkDepth = (int) dimensions.z;
+        
 
         MeshFilter mf = this.gameObject.AddComponent<MeshFilter>();
         MeshRenderer mr = this.gameObject.AddComponent<MeshRenderer>();
@@ -107,6 +109,7 @@ public class Chunk : MonoBehaviour
 
         var handle = jobs.Schedule(inputMeshes.Count, 4);
         var newMesh = new Mesh();
+        newMesh.name = "Chunk " + chunkPosition.x + "_" + chunkPosition.y + "_" + chunkPosition.z;
         var sm = new SubMeshDescriptor(0, triStart, MeshTopology.Triangles);
         sm.firstVertex = 0;
         sm.vertexCount = vertexStart;
