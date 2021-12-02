@@ -9,8 +9,13 @@ public class World : MonoBehaviour
     public static Vector3 chunkDimensions = new Vector3(10,10,10); // chunk dimensions (chunkWidth,ChunkHeight,ChunkDepth)
     public GameObject chunkPrefab;
 
-    // Start is called before the first frame update
     void Start()
+    {
+        StartCoroutine(BuildWorld());
+    }
+
+    // Corotuine is necessary to allow world to be built and render without any crashes
+    IEnumerator BuildWorld()
     {
         for (int z = 0; z < worldDimensions.z; z++)
         {
@@ -21,6 +26,7 @@ public class World : MonoBehaviour
                     GameObject chunk = Instantiate(chunkPrefab);
                     Vector3 chunkPosition = new Vector3(x * chunkDimensions.x, y * chunkDimensions.y, z * chunkDimensions.z);
                     chunk.GetComponent<Chunk>().CreateChunk(chunkDimensions, chunkPosition);
+                    yield return null;
 
                 }
             }
