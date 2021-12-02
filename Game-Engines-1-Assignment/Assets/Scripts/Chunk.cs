@@ -29,9 +29,9 @@ public class Chunk : MonoBehaviour
             int z = i / (chunkWidth * chunkHeight);
 
            if(MeshManager.fBm(x,z,8,0.001f,10,-33) > y) // FractcallBrowningMethod(x,y,octaves,Scale,HeightScale,HeightOffset) >y)
-                chunkData[i] = MeshManager.BlockType.DIRT;
+                chunkData[i] = MeshManager.BlockType.Dirt;
             else
-                chunkData[i] = MeshManager.BlockType.GRASSTOP;
+                chunkData[i] = MeshManager.BlockType.Air;
         }
     }
 

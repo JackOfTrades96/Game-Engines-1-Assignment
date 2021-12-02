@@ -12,7 +12,7 @@ public class Quad
         quadMesh = new Mesh();
         quadMesh.name = "ScriptableQuad";
 
-        Vector3[] vertices = new Vector3[5];
+        Vector3[] vertices = new Vector3[4];
         Vector3[] normals = new Vector3[4];
         Vector2[] uvs = new Vector2[4];
         int[] triangles = new int[6];
