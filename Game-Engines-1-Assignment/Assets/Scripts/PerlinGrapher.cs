@@ -41,7 +41,7 @@ public class PerlinGrapher : MonoBehaviour
         Vector3[] positions = new Vector3[lineRenderer.positionCount];
         for(int x = 0; x < lineRenderer.positionCount; x ++)
         {
-            float y = fBm(x,z) + heightOffset;
+            float y = MeshManager.fBm(x, z, octaves, Scale, heightScale, heightOffset);
             positions[x] = new Vector3(x, y, z);
 
         }

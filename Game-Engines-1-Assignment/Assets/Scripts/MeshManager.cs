@@ -27,6 +27,7 @@ public static class MeshManager
                         new Vector2(0.125f,0.9375f), new Vector2(0.1875f,0.9375f)}
     };
 
+    // FractallBrowningMethod(x,y,octaves,Scale,HeightScale,HeightOffset) >y)
     public static float fBm(float x, float z, int octaves, float Scale, float heightScale, float heightoffset)
     {
         float total = 0;

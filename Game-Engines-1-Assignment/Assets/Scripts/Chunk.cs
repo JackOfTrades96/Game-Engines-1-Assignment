@@ -18,7 +18,7 @@ public class Chunk : MonoBehaviour
     //Perlin Settings
     public float heightScale = 10;
     public float scale = 0.001f;
-    public int ocatves = 8;
+    public int octaves = 8;
     public float heightOffset = -33;
 
     // chunk position within world space
@@ -39,7 +39,14 @@ public class Chunk : MonoBehaviour
             int y = i / chunkWidth % chunkHeight + (int) chunkPosition.y;
             int z = i / (chunkWidth * chunkHeight) + (int) chunkPosition.z;
 
-           if(MeshManager.fBm(x ,z , ocatves, scale, heightScale, heightOffset) > y) // FractcallBrowningMethod(x,y,octaves,Scale,HeightScale,HeightOffset) >y)
+            float surfaceHeight = (int) MeshManager.fBm(x, z, octaves, scale, heightScale, heightOffset); 
+
+           if(surfaceHeight == y)
+            {
+                chunkData[i] = MeshManager.BlockType.GrassSide; // replaceing Dirt blocks on top layer with grass side blocks.
+            }
+
+           else if(y < surfaceHeight)
                 chunkData[i] = MeshManager.BlockType.Dirt;
             else
                 chunkData[i] = MeshManager.BlockType.Air;
@@ -62,6 +69,8 @@ public class Chunk : MonoBehaviour
 
         MeshFilter mf = this.gameObject.AddComponent<MeshFilter>();
         MeshRenderer mr = this.gameObject.AddComponent<MeshRenderer>();
+        MeshCollider mc = this.gameObject.AddComponent<MeshCollider>();
+        
         mr.material = Textures;
         blocks = new Block [chunkWidth, chunkHeight, chunkDepth];
         BuildChunk();
@@ -125,6 +134,7 @@ public class Chunk : MonoBehaviour
         newMesh.RecalculateBounds();
 
         mf.mesh = newMesh;
+        mc.sharedMesh = mf.mesh;
 
     }
 

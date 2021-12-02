@@ -18,10 +18,37 @@ public class Block
             List<Quad> quads = new List<Quad>();
 
             if (!HasSolidNeighbour((int)blockLocalPosition.x, (int)blockLocalPosition.y + 1, (int)blockLocalPosition.z))
-                quads.Add(new Quad(MeshManager.BlockFace.Top, offset, blocktype));
+            {
+                if( blocktype == MeshManager.BlockType.GrassSide ) // if Top blocks are textured as Grass Side blocks
+                {
+                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, MeshManager.BlockType.GrassTop)); // Replace them with Grass Top Texture
+                }
+
+                else
+                {
+                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, blocktype)); 
+                }
+
+                
+            }
+
+               
 
             if (!HasSolidNeighbour((int)blockLocalPosition.x, (int)blockLocalPosition.y - 1, (int)blockLocalPosition.z))
-                quads.Add(new Quad(MeshManager.BlockFace.Bottom, offset, blocktype));
+            {
+                if ( blocktype == MeshManager.BlockType.GrassSide)  // if Bottom blocks are textured as Grass Side blocks
+                {
+                    quads.Add(new Quad(MeshManager.BlockFace.Bottom, offset, MeshManager.BlockType.Dirt)); // Replace them with Dirt Texture
+                }
+
+                else
+                {
+                    quads.Add(new Quad(MeshManager.BlockFace.Bottom, offset, blocktype));
+                }
+            }
+               
+
+              
 
             if (!HasSolidNeighbour((int)blockLocalPosition.x, (int)blockLocalPosition.y, (int)blockLocalPosition.z + 1))
                 quads.Add(new Quad(MeshManager.BlockFace.Front, offset, blocktype));
