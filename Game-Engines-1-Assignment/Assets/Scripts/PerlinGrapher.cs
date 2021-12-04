@@ -6,11 +6,16 @@ using UnityEngine;
 
 public class PerlinGrapher : MonoBehaviour
 {
-    LineRenderer lineRenderer;
+    public LineRenderer lineRenderer;
     public float heightScale = 2;
+    [Range(0.0f, 1.0f)]
     public float Scale = 0.5f;
+    [Range(0.0f, 1.0f)]
     public int octaves = 1;
+    [Range(0.0f, 1.0f)]
     public float heightOffset = 1;
+    [Range(0.0f,1.0f)]
+    public float probability = 1;
 
 
      void Start()
@@ -37,7 +42,7 @@ public class PerlinGrapher : MonoBehaviour
         lineRenderer = this.GetComponent<LineRenderer>();
         lineRenderer.positionCount = 100;
 
-        int z = 11;
+        int z = 0;
         Vector3[] positions = new Vector3[lineRenderer.positionCount];
         for(int x = 0; x < lineRenderer.positionCount; x ++)
         {

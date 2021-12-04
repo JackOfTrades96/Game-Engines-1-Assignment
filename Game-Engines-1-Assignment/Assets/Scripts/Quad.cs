@@ -13,10 +13,10 @@ public class Quad
         
         // Quads are made up of  vertex arrays,  normals  texture Coords(uvs) &  triangles.
 
-        Vector3[] vertices = new Vector3[4];
-        Vector3[] normals = new Vector3[4];
-        Vector2[] uvs = new Vector2[4];
-        int[] triangles = new int[6];
+        Vector3[] vertices = new Vector3[4]; // Vecrtices Array
+        Vector3[] normals = new Vector3[4]; // Normals Array
+        Vector2[] uvs = new Vector2[4]; // Uvs Array
+        int[] triangles = new int[6]; // Triangle Array
         triangles = new int[] { 3, 1, 0, 3, 2, 1 };
 
         // UV Array
@@ -40,18 +40,18 @@ public class Quad
 
             case MeshManager.BlockFace.Top:
                 {
-                    vertices = new Vector3[] { v7, v6, v5, v4 };
-                    normals = new Vector3[] { Vector3.up, Vector3.up, Vector3.up, Vector3.up };
-                    uvs = new Vector2[] { uv11, uv01, uv00, uv10 };
+                    vertices = new Vector3[] { v7, v6, v5, v4 }; // setting the  vertices for  the Top Quad
+                    normals = new Vector3[] { Vector3.up, Vector3.up, Vector3.up, Vector3.up }; // setting the  normals for  the Top Quad
+                    uvs = new Vector2[] { uv11, uv01, uv00, uv10 }; // setting the uvs  for the Top Quad
                     break;
 
                 }
 
             case MeshManager.BlockFace.Bottom:
                 {
-                    vertices = new Vector3[] { v0, v1, v2, v3 };
-                    normals = new Vector3[] { Vector3.down, Vector3.down, Vector3.down, Vector3.down };
-                    uvs = new Vector2[] { uv11, uv01, uv00, uv10 };
+                    vertices = new Vector3[] { v0, v1, v2, v3 }; // setting the  vertices for the Bottom Quad
+                    normals = new Vector3[] { Vector3.down, Vector3.down, Vector3.down, Vector3.down }; // setting the   normals for  the Bottom Quad
+                    uvs = new Vector2[] { uv11, uv01, uv00, uv10 }; // setting the uvs for the Bottom Quad
                     break;
 
                 }
@@ -59,36 +59,36 @@ public class Quad
 
             case MeshManager.BlockFace.Front:
                 {
-                    vertices = new Vector3[] { v4, v5, v1, v0 };
-                    normals = new Vector3[] { Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward };
-                    uvs = new Vector2[] { uv11, uv01, uv00, uv10 };
+                    vertices = new Vector3[] { v4, v5, v1, v0 }; // setting the  vertices for  the Front Quad
+                    normals = new Vector3[] { Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward };  // setting the  normals for  the Front Quad
+                    uvs = new Vector2[] { uv11, uv01, uv00, uv10 }; // setting the uvs for the Front Quad
                     break;
 
                 }
 
             case MeshManager.BlockFace.Back:
                 {
-                    vertices = new Vector3[] { v6, v7, v3, v2 };
-                    normals = new Vector3[] { Vector3.back, Vector3.back, Vector3.back, Vector3.back };
-                    uvs = new Vector2[] { uv11, uv01, uv00, uv10 };
+                    vertices = new Vector3[] { v6, v7, v3, v2 }; // setting the  vertices for  the Back Quad
+                    normals = new Vector3[] { Vector3.back, Vector3.back, Vector3.back, Vector3.back }; // setting the  normals for  the Back Quad
+                    uvs = new Vector2[] { uv11, uv01, uv00, uv10 }; // setting the uvs for the Back Quad
                     break;
 
                 }
 
             case MeshManager.BlockFace.Left:
                 {
-                    vertices = new Vector3[] { v7, v4, v0, v3 };
-                    normals = new Vector3[] { Vector3.left, Vector3.left, Vector3.left, Vector3.left };
-                    uvs = new Vector2[] { uv11, uv01, uv00, uv10 };
+                    vertices = new Vector3[] { v7, v4, v0, v3 }; // setting the  vertices for  the Left Quad
+                    normals = new Vector3[] { Vector3.left, Vector3.left, Vector3.left, Vector3.left }; // setting the  normals for  the Left Quad
+                    uvs = new Vector2[] { uv11, uv01, uv00, uv10 }; // setting the  uvs for the Left Quad
                     break;
 
                 }
 
             case MeshManager.BlockFace.Right:
                 {
-                    vertices = new Vector3[] { v5, v6, v2, v1 };
-                    normals = new Vector3[] { Vector3.right, Vector3.right, Vector3.right, Vector3.right };
-                    uvs = new Vector2[] { uv11, uv01, uv00, uv10 };
+                    vertices = new Vector3[] { v5, v6, v2, v1 };  // setting the  vertices for  the Right Quad
+                    normals = new Vector3[] { Vector3.right, Vector3.right, Vector3.right, Vector3.right };  // setting the  normals for  the Right Quad
+                    uvs = new Vector2[] { uv11, uv01, uv00, uv10 }; // setting the uvs for the Right Quad
                     break;
 
                 }

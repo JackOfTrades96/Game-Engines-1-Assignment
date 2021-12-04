@@ -13,20 +13,20 @@ public class Block
         parentChunk = chunk;
         Vector3 blockLocalPosition = offset - chunk.chunkPosition;
 
-        if (blocktype != MeshManager.BlockType.Air)
+        if (blocktype != MeshManager.BlockType.Air) // if blocktype is not equal to Air Block.
         {
-            List<Quad> quads = new List<Quad>();
+            List<Quad> quads = new List<Quad>(); // creates list of quads from Quad class
 
-            if (!HasSolidNeighbour((int)blockLocalPosition.x, (int)blockLocalPosition.y + 1, (int)blockLocalPosition.z))
+            if (!HasSolidNeighbour((int)blockLocalPosition.x, (int)blockLocalPosition.y + 1, (int)blockLocalPosition.z)) // if a Block has no neighbouring block at its x,y or z Coords.
             {
-                if( blocktype == MeshManager.BlockType.GrassSide ) // if Top blocks are textured as Grass Side blocks
+                if( blocktype == MeshManager.BlockType.GrassSide ) // if block type  is  textured as Grass Side blocks
                 {
-                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, MeshManager.BlockType.GrassTop)); // Replace them with Grass Top Texture
+                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, MeshManager.BlockType.GrassTop)); // Add quads form list and Replace texture them with Grass Top Texture
                 }
 
                 else
                 {
-                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, blocktype)); 
+                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, blocktype));  
                 }
 
                 

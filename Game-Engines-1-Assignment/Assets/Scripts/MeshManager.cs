@@ -12,6 +12,8 @@ public static class MeshManager
 
     public enum BlockFace { Top, Bottom, Front, Back, Left, Right };
 
+
+    // Texture Being Used is 1280 x 1280. 16x16 textures. 1/16 = 0.0625
     public static Vector2[,] blockUVs = {
         /*GRASSTOP*/ {  new Vector2(0.125f, 0.375f), new Vector2(0.1875f,0.375f),
                         new Vector2(0.125f, 0.4375f), new Vector2(0.1875f,0.4375f) },

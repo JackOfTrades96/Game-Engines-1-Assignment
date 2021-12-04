@@ -15,11 +15,7 @@ public class Chunk : MonoBehaviour
     public int chunkHeight = 256;
     public int chunkDepth = 2;
 
-    //Perlin Settings
-    public float heightScale = 10;
-    public float scale = 0.001f;
-    public int octaves = 8;
-    public float heightOffset = -33;
+    
 
     // chunk position within world space
      public Vector3 chunkPosition;
@@ -39,7 +35,8 @@ public class Chunk : MonoBehaviour
             int y = i / chunkWidth % chunkHeight + (int) chunkPosition.y;
             int z = i / (chunkWidth * chunkHeight) + (int) chunkPosition.z;
 
-            float surfaceHeight = (int) MeshManager.fBm(x, z, octaves, scale, heightScale, heightOffset); 
+            float surfaceHeight = (int) MeshManager.fBm(x, z, World.surfaceLayerSettings.octaves, World.surfaceLayerSettings.Scale,
+                World.surfaceLayerSettings.heightScale, World.surfaceLayerSettings.heightOffset); 
 
            if(surfaceHeight == y)
             {
