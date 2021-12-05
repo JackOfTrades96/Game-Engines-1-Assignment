@@ -41,6 +41,8 @@ public class Chunk : MonoBehaviour
             int stoneHeight = (int)MeshManager.fBm(x, z, World.stoneLayerSettings.octaves, World.stoneLayerSettings.Scale,
                 World.stoneLayerSettings.heightScale, World.stoneLayerSettings.heightOffset);
 
+            int caveHeight = (int)MeshManager.fBm3D(x, y, z, World.cavesLayerSettings.octaves, World.cavesLayerSettings.Scale, World.cavesLayerSettings.heightScale, World.cavesLayerSettings.heightOffset);
+
             int coalTopHeight = (int)MeshManager.fBm(x, z, World.coalTopLayerSettings.octaves, World.coalTopLayerSettings.Scale,
                 World.coalTopLayerSettings.heightScale, World.coalTopLayerSettings.heightOffset);
 
@@ -61,6 +63,9 @@ public class Chunk : MonoBehaviour
                 chunkData[i] = MeshManager.BlockType.Dirt;
             else
                 chunkData[i] = MeshManager.BlockType.Air;
+            if (caveHeight < World.cavesLayerSettings.probability)
+                chunkData[i] = MeshManager.BlockType.Air;
+
         }
     }
 

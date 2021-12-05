@@ -48,6 +48,20 @@ public static class MeshManager
     }
 
 
+    public static float fBm3D(float x,float y, float z, int octaves, float Scale, float heightScale, float heightoffset)
+    {
+        float xy = fBm(x, y, octaves, Scale, heightScale, heightoffset);
+        float yx = fBm(y, x, octaves, Scale, heightScale, heightoffset);
+        float yz = fBm(y, z, octaves, Scale, heightScale, heightoffset);
+        float zy = fBm(z, y, octaves, Scale, heightScale, heightoffset);
+        float xz = fBm(x, y, octaves, Scale, heightScale, heightoffset);
+        float zx = fBm(z, x, octaves, Scale, heightScale, heightoffset);
+
+        return (xy + yx + yz + zy + xz + zx) /6.0f;
+
+    }
+
+
     public static Mesh MergeMeshes(Mesh[] meshes)
     {
         Mesh mesh = new Mesh();

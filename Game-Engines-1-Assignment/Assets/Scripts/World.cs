@@ -37,12 +37,16 @@ public class World : MonoBehaviour
     public static PerlinSettings stoneLayerSettings;
     public PerlinGrapher stoneLayer;
 
+    public static PerlinSettings cavesLayerSettings;
+    public PerlinGrapher3D cavesLayer;
     
     public static PerlinSettings coalTopLayerSettings;
     public PerlinGrapher coalTopLayer;
 
     public static PerlinSettings coalBottomLayerSettings;
     public PerlinGrapher coalBottomLayer;
+
+
 
 
     public Camera playerCamera;
@@ -55,6 +59,7 @@ public class World : MonoBehaviour
        
         surfaceLayerSettings = new PerlinSettings(surfaceLayer.heightScale, surfaceLayer.Scale, surfaceLayer.octaves, surfaceLayer.heightOffset, surfaceLayer.probability);
         stoneLayerSettings = new PerlinSettings(stoneLayer.heightScale, stoneLayer.Scale, stoneLayer.octaves, stoneLayer.heightOffset, stoneLayer.probability);
+        cavesLayerSettings = new PerlinSettings(cavesLayer.heightScale, cavesLayer.Scale, cavesLayer.octaves, cavesLayer.heightOffset, cavesLayer.CutOff);
         coalTopLayerSettings = new PerlinSettings(coalTopLayer.heightScale, coalTopLayer.Scale, coalTopLayer.octaves, coalTopLayer.heightOffset, coalTopLayer.probability);
         coalBottomLayerSettings = new PerlinSettings(coalBottomLayer.heightScale, coalBottomLayer.Scale, coalBottomLayer.octaves, coalBottomLayer.heightOffset, coalTopLayer.probability);
 
