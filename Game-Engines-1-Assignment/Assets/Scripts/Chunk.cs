@@ -41,16 +41,23 @@ public class Chunk : MonoBehaviour
             int stoneHeight = (int)MeshManager.fBm(x, z, World.stoneLayerSettings.octaves, World.stoneLayerSettings.Scale,
                 World.stoneLayerSettings.heightScale, World.stoneLayerSettings.heightOffset);
 
+            int coalTopHeight = (int)MeshManager.fBm(x, z, World.coalTopLayerSettings.octaves, World.coalTopLayerSettings.Scale,
+                World.coalTopLayerSettings.heightScale, World.coalTopLayerSettings.heightOffset);
+
+            int coalBottomHeight = (int)MeshManager.fBm(x, z, World.coalBottomLayerSettings.octaves, World.coalBottomLayerSettings.Scale,
+                World.coalBottomLayerSettings.heightScale, World.coalBottomLayerSettings.heightOffset);
 
             if (surfaceHeight == y)
             {
                 chunkData[i] = MeshManager.BlockType.GrassSide; // replaceing Dirt blocks on top layer with grass side blocks.
             }
 
+            else if (y < coalTopHeight && y > coalBottomHeight && UnityEngine.Random.Range(0.0f, 1.0f) <= World.coalTopLayerSettings.probability)
+                chunkData[i] = MeshManager.BlockType.Diamond;
             else if (y < stoneHeight && UnityEngine.Random.Range(0.0f, 1.0f) <= World.stoneLayerSettings.probability)
                 chunkData[i] = MeshManager.BlockType.Stone;
 
-            else if(y < surfaceHeight)
+            else if (y < surfaceHeight)
                 chunkData[i] = MeshManager.BlockType.Dirt;
             else
                 chunkData[i] = MeshManager.BlockType.Air;

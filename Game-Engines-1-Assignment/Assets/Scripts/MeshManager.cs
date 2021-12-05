@@ -7,7 +7,7 @@ public static class MeshManager
 {
     public enum BlockType
     {
-        GrassTop, GrassSide, Dirt, Water, Stone, Sand, Air
+        GrassTop, GrassSide, Dirt, Water, Stone, Sand, Diamond , Air
     };
 
     public enum BlockFace { Top, Bottom, Front, Back, Left, Right };
@@ -28,7 +28,10 @@ public static class MeshManager
         /*STONE*/	  { new Vector2( 0.1875f, 0.9375f ), new Vector2( 0.25f, 0.9375f),
                         new Vector2( 0.1875f, 1f ),new Vector2( 0.25f, 1f )},
         /*SAND*/	  { new Vector2(0.125f,0.875f),  new Vector2(0.1875f,0.875f),
-                        new Vector2(0.125f,0.9375f), new Vector2(0.1875f,0.9375f)}
+                        new Vector2(0.125f,0.9375f), new Vector2(0.1875f,0.9375f)},
+        /*Diamond*/ { new Vector2( 0.125f, 0.9375f ), new Vector2(0.1875f, 0.9375f),
+                      new Vector2(0.125f, 1.0f), new Vector2( 0.1875f, 1.0f )} 
+
     };
 
     // FractallBrowningMethod(x,y,octaves,Scale,HeightScale,HeightOffset) >y)

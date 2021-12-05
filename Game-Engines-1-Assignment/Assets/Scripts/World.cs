@@ -37,6 +37,14 @@ public class World : MonoBehaviour
     public static PerlinSettings stoneLayerSettings;
     public PerlinGrapher stoneLayer;
 
+    
+    public static PerlinSettings coalTopLayerSettings;
+    public PerlinGrapher coalTopLayer;
+
+    public static PerlinSettings coalBottomLayerSettings;
+    public PerlinGrapher coalBottomLayer;
+
+
     public Camera playerCamera;
     public GameObject player;
     public Slider loadingBar;
@@ -44,8 +52,12 @@ public class World : MonoBehaviour
 
     void Start()
     {
+       
         surfaceLayerSettings = new PerlinSettings(surfaceLayer.heightScale, surfaceLayer.Scale, surfaceLayer.octaves, surfaceLayer.heightOffset, surfaceLayer.probability);
         stoneLayerSettings = new PerlinSettings(stoneLayer.heightScale, stoneLayer.Scale, stoneLayer.octaves, stoneLayer.heightOffset, stoneLayer.probability);
+        coalTopLayerSettings = new PerlinSettings(coalTopLayer.heightScale, coalTopLayer.Scale, coalTopLayer.octaves, coalTopLayer.heightOffset, coalTopLayer.probability);
+        coalBottomLayerSettings = new PerlinSettings(coalBottomLayer.heightScale, coalBottomLayer.Scale, coalBottomLayer.octaves, coalBottomLayer.heightOffset, coalTopLayer.probability);
+
         StartCoroutine(BuildWorld());
         loadingBar.maxValue = worldDimensions.x * worldDimensions.y * worldDimensions.z; // loadingBar max value set to amount of chunks in world by using the x, y and z values of the world dimensions
 
