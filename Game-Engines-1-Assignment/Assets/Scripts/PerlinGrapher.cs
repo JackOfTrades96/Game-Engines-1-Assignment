@@ -10,9 +10,9 @@ public class PerlinGrapher : MonoBehaviour
     public float heightScale = 2;
     [Range(0.0f, 1.0f)]
     public float Scale = 0.5f;
-    [Range(0.0f, 1.0f)]
+    [Range(0.0f, 10.0f)]
     public int octaves = 1;
-    [Range(0.0f, 1.0f)]
+    
     public float heightOffset = 1;
     [Range(0.0f,1.0f)]
     public float probability = 1;

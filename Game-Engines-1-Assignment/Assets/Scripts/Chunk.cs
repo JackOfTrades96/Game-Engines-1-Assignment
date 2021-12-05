@@ -35,15 +35,22 @@ public class Chunk : MonoBehaviour
             int y = i / chunkWidth % chunkHeight + (int) chunkPosition.y;
             int z = i / (chunkWidth * chunkHeight) + (int) chunkPosition.z;
 
-            float surfaceHeight = (int) MeshManager.fBm(x, z, World.surfaceLayerSettings.octaves, World.surfaceLayerSettings.Scale,
+            int surfaceHeight = (int) MeshManager.fBm(x, z, World.surfaceLayerSettings.octaves, World.surfaceLayerSettings.Scale,
                 World.surfaceLayerSettings.heightScale, World.surfaceLayerSettings.heightOffset); 
 
-           if(surfaceHeight == y)
+            int stoneHeight = (int)MeshManager.fBm(x, z, World.stoneLayerSettings.octaves, World.stoneLayerSettings.Scale,
+                World.stoneLayerSettings.heightScale, World.stoneLayerSettings.heightOffset);
+
+
+            if (surfaceHeight == y)
             {
                 chunkData[i] = MeshManager.BlockType.GrassSide; // replaceing Dirt blocks on top layer with grass side blocks.
             }
 
-           else if(y < surfaceHeight)
+            else if (y < stoneHeight && UnityEngine.Random.Range(0.0f, 1.0f) <= World.stoneLayerSettings.probability)
+                chunkData[i] = MeshManager.BlockType.Stone;
+
+            else if(y < surfaceHeight)
                 chunkData[i] = MeshManager.BlockType.Dirt;
             else
                 chunkData[i] = MeshManager.BlockType.Air;
