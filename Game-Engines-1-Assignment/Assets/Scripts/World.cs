@@ -27,9 +27,10 @@ public struct PerlinSettings
 public class World : MonoBehaviour
 {
 
-    public static Vector3 worldDimensions = new Vector3(1,24,1); // world dimensions (How many chunks within the world)
+    public static Vector3 worldDimensions = new Vector3(4,24,4); // world dimensions (How many chunks within the world)
     public static Vector3 chunkDimensions = new Vector3(16,16,16); // chunk dimensions (chunkWidth,ChunkHeight,ChunkDepth)
     public GameObject chunkPrefab;
+    
 
     public static PerlinSettings surfaceLayerSettings;
     public PerlinGrapher surfaceLayer;
@@ -51,7 +52,7 @@ public class World : MonoBehaviour
 
 
 
-    public Camera playerCamera;
+    public GameObject IntroCamera;
     public GameObject player;
     public Slider loadingBar;
 
@@ -89,6 +90,18 @@ public class World : MonoBehaviour
             }
         }
 
+        IntroCamera.SetActive(false);
+        player.SetActive(true);
+
+        float xposition = (worldDimensions.x * chunkDimensions.x) /2.0f;
+        float zposition = (worldDimensions.z * chunkDimensions.z) / 2.0f;
+        Chunk playerChunk = chunkPrefab.GetComponent<Chunk>();
+        //float yposition = MeshManager.fBm(xposition, zposition, playerChunk.octaves, playerChunk.Scale, playerChunk.heighScale, playerChunk.heightOffset) + 10;
+        player.transform.position = new Vector3(xposition, 100, zposition);
+       
+
+      
+        
     }
 
     // Update is called once per frame
