@@ -27,8 +27,8 @@ public struct PerlinSettings
 public class World : MonoBehaviour
 {
 
-    public static Vector3 worldDimensions = new Vector3(10,10,10); // world dimensions (How many chunks within the world)
-    public static Vector3 chunkDimensions = new Vector3(10,10,10); // chunk dimensions (chunkWidth,ChunkHeight,ChunkDepth)
+    public static Vector3 worldDimensions = new Vector3(1,24,1); // world dimensions (How many chunks within the world)
+    public static Vector3 chunkDimensions = new Vector3(16,16,16); // chunk dimensions (chunkWidth,ChunkHeight,ChunkDepth)
     public GameObject chunkPrefab;
 
     public static PerlinSettings surfaceLayerSettings;
@@ -37,15 +37,17 @@ public class World : MonoBehaviour
     public static PerlinSettings stoneLayerSettings;
     public PerlinGrapher stoneLayer;
 
-    public static PerlinSettings cavesLayerSettings;
-    public PerlinGrapher3D cavesLayer;
-    
-    public static PerlinSettings coalTopLayerSettings;
-    public PerlinGrapher coalTopLayer;
+    // public static PerlinSettings cavesLayerSettings;
+    // public PerlinGrapher3D cavesLayer;
 
-    public static PerlinSettings coalBottomLayerSettings;
-    public PerlinGrapher coalBottomLayer;
+    // public static PerlinSettings coalTopLayerSettings;
+    // public PerlinGrapher coalTopLayer;
 
+    // public static PerlinSettings coalBottomLayerSettings;
+    //public PerlinGrapher coalBottomLayer;
+
+    public static PerlinSettings bedrockLayerSettings;
+    public PerlinGrapher bedrockLayer;
 
 
 
@@ -59,9 +61,9 @@ public class World : MonoBehaviour
        
         surfaceLayerSettings = new PerlinSettings(surfaceLayer.heightScale, surfaceLayer.Scale, surfaceLayer.octaves, surfaceLayer.heightOffset, surfaceLayer.probability);
         stoneLayerSettings = new PerlinSettings(stoneLayer.heightScale, stoneLayer.Scale, stoneLayer.octaves, stoneLayer.heightOffset, stoneLayer.probability);
-        cavesLayerSettings = new PerlinSettings(cavesLayer.heightScale, cavesLayer.Scale, cavesLayer.octaves, cavesLayer.heightOffset, cavesLayer.CutOff);
-        coalTopLayerSettings = new PerlinSettings(coalTopLayer.heightScale, coalTopLayer.Scale, coalTopLayer.octaves, coalTopLayer.heightOffset, coalTopLayer.probability);
-        coalBottomLayerSettings = new PerlinSettings(coalBottomLayer.heightScale, coalBottomLayer.Scale, coalBottomLayer.octaves, coalBottomLayer.heightOffset, coalTopLayer.probability);
+        //cavesLayerSettings = new PerlinSettings(cavesLayer.heightScale, cavesLayer.Scale, cavesLayer.octaves, cavesLayer.heightOffset, cavesLayer.CutOff);
+        //coalTopLayerSettings = new PerlinSettings(coalTopLayer.heightScale, coalTopLayer.Scale, coalTopLayer.octaves, coalTopLayer.heightOffset, coalTopLayer.probability);
+        //coalBottomLayerSettings = new PerlinSettings(coalBottomLayer.heightScale, coalBottomLayer.Scale, coalBottomLayer.octaves, coalBottomLayer.heightOffset, coalBottomLayer.probability);
 
         StartCoroutine(BuildWorld());
         loadingBar.maxValue = worldDimensions.x * worldDimensions.y * worldDimensions.z; // loadingBar max value set to amount of chunks in world by using the x, y and z values of the world dimensions

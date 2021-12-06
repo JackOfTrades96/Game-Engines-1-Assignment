@@ -12,8 +12,8 @@ public class Chunk : MonoBehaviour
 
     // Chunk(width,height,depth)(16x256x16)
     public int chunkWidth = 16;
-    public int chunkHeight = 256;
-    public int chunkDepth = 2;
+    public int chunkHeight = 16;
+    public int chunkDepth = 16;
 
     
 
@@ -41,30 +41,57 @@ public class Chunk : MonoBehaviour
             int stoneHeight = (int)MeshManager.fBm(x, z, World.stoneLayerSettings.octaves, World.stoneLayerSettings.Scale,
                 World.stoneLayerSettings.heightScale, World.stoneLayerSettings.heightOffset);
 
-            int caveHeight = (int)MeshManager.fBm3D(x, y, z, World.cavesLayerSettings.octaves, World.cavesLayerSettings.Scale, World.cavesLayerSettings.heightScale, World.cavesLayerSettings.heightOffset);
+            //int caveHeight = (int)MeshManager.fBm3D(x, y, z, World.cavesLayerSettings.octaves, World.cavesLayerSettings.Scale, World.cavesLayerSettings.heightScale, World.cavesLayerSettings.heightOffset);
 
-            int coalTopHeight = (int)MeshManager.fBm(x, z, World.coalTopLayerSettings.octaves, World.coalTopLayerSettings.Scale,
-                World.coalTopLayerSettings.heightScale, World.coalTopLayerSettings.heightOffset);
+            // int coalTopHeight = (int)MeshManager.fBm(x, z, World.coalTopLayerSettings.octaves, World.coalTopLayerSettings.Scale,
+            //   World.coalTopLayerSettings.heightScale, World.coalTopLayerSettings.heightOffset);
 
-            int coalBottomHeight = (int)MeshManager.fBm(x, z, World.coalBottomLayerSettings.octaves, World.coalBottomLayerSettings.Scale,
-                World.coalBottomLayerSettings.heightScale, World.coalBottomLayerSettings.heightOffset);
+            // int coalBottomHeight = (int)MeshManager.fBm(x, z, World.coalBottomLayerSettings.octaves, World.coalBottomLayerSettings.Scale,
+            //   World.coalBottomLayerSettings.heightScale, World.coalBottomLayerSettings.heightOffset);
+
+
+            if (y < 3)
+            {
+                chunkData[i] = MeshManager.BlockType.Bedrock;
+                continue;
+            }
+            //if (caveHeight < World.cavesLayerSettings.probability)
+            {
+                //  chunkData[i] = MeshManager.BlockType.Air;
+                //continue
+            }
+
+           
 
             if (surfaceHeight == y)
             {
                 chunkData[i] = MeshManager.BlockType.GrassSide; // replaceing Dirt blocks on top layer with grass side blocks.
+                continue;
             }
 
-            else if (y < coalTopHeight && y > coalBottomHeight && UnityEngine.Random.Range(0.0f, 1.0f) <= World.coalTopLayerSettings.probability)
-                chunkData[i] = MeshManager.BlockType.Diamond;
+
             else if (y < stoneHeight && UnityEngine.Random.Range(0.0f, 1.0f) <= World.stoneLayerSettings.probability)
+            {
                 chunkData[i] = MeshManager.BlockType.Stone;
+            }
+
+            // else if (y < coalTopHeight && y > coalBottomHeight && UnityEngine.Random.Range(0.0f, 1.0f) <= World.coalTopLayerSettings.probability)
+            //{
+                //  chunkData[i] = MeshManager.BlockType.Coal;
+            //}
 
             else if (y < surfaceHeight)
+            {
                 chunkData[i] = MeshManager.BlockType.Dirt;
+            }
+                
             else
+            {
                 chunkData[i] = MeshManager.BlockType.Air;
-            if (caveHeight < World.cavesLayerSettings.probability)
-                chunkData[i] = MeshManager.BlockType.Air;
+
+            }
+
+
 
         }
     }

@@ -7,7 +7,7 @@ public static class MeshManager
 {
     public enum BlockType
     {
-        GrassTop, GrassSide, Dirt, Water, Stone, Sand, Diamond , Air
+        GrassTop, GrassSide, Dirt, Water, Stone, Sand, Diamond, Bedrock , Air
     };
 
     public enum BlockFace { Top, Bottom, Front, Back, Left, Right };
@@ -17,20 +17,22 @@ public static class MeshManager
     //First Vector is Bottom Right of Texture, Second Vector is Bottom Left of Texture
     //Third Vector is Top Right of Texture, Fourth Vector is Top Left of Texture.
     public static Vector2[,] blockUVs = {
-        /*GRASSTOP*/ {  new Vector2(0.0625f,0.9375f), new Vector2(0.125f,0.9375f),
+        /*GrassTop*/ {  new Vector2(0.0625f,0.9375f), new Vector2(0.125f,0.9375f),
                         new Vector2(0.0625f, 1f), new Vector2(0.125f,1f) },
-        /*GRASSSIDE*/ { new Vector2( 0f, 0.9375f ), new Vector2( 0.0625f, 0.9375f),
+        /*GrassSide*/ { new Vector2( 0f, 0.9375f ), new Vector2( 0.0625f, 0.9375f),
                         new Vector2( 0f, 1.0f ),new Vector2( 0.0625f, 1.0f )},
-        /*DIRT*/	  { new Vector2( 0.125f, 0.9375f ), new Vector2( 0.1875f, 0.9375f),
+        /*Dirt*/	  { new Vector2( 0.125f, 0.9375f ), new Vector2( 0.1875f, 0.9375f),
                         new Vector2( 0.125f, 1.0f ),new Vector2( 0.1875f, 1.0f )},
-        /*WATER*/	  { new Vector2(0.875f,0.125f),  new Vector2(0.9375f,0.125f),
+        /*Water*/	  { new Vector2(0.875f,0.125f),  new Vector2(0.9375f,0.125f),
                         new Vector2(0.875f,0.1875f), new Vector2(0.9375f,0.1875f)},
-        /*STONE*/	  { new Vector2( 0.1875f, 0.9375f ), new Vector2( 0.25f, 0.9375f),
+        /*Stone*/	  { new Vector2( 0.1875f, 0.9375f ), new Vector2( 0.25f, 0.9375f),
                         new Vector2( 0.1875f, 1f ),new Vector2( 0.25f, 1f )},
-        /*SAND*/	  { new Vector2(0.125f,0.875f),  new Vector2(0.1875f,0.875f),
+        /*Sand*/	  { new Vector2(0.125f,0.875f),  new Vector2(0.1875f,0.875f),
                         new Vector2(0.125f,0.9375f), new Vector2(0.1875f,0.9375f)},
         /*Diamond*/ { new Vector2( 0.125f, 0.9375f ), new Vector2(0.1875f, 0.9375f),
-                      new Vector2(0.125f, 1.0f), new Vector2( 0.1875f, 1.0f )} 
+                      new Vector2(0.125f, 1.0f), new Vector2( 0.1875f, 1.0f )},
+         /*BedRock*/	  { new Vector2( 0.125f, 0.9375f ), new Vector2( 0.1875f, 0.9375f),
+                        new Vector2( 0.125f, 1.0f ),new Vector2( 0.1875f, 1.0f )},
 
     };
 
