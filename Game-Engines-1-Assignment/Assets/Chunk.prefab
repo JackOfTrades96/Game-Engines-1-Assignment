@@ -44,8 +44,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Textures: {fileID: 2100000, guid: f0dbd491fa27fc14ea4b185bc90f10f7, type: 2}
-  chunkWidth: 10
-  chunkHeight: 10
-  chunkDepth: 10
+  chunkWidth: 16
+  chunkHeight: 16
+  chunkDepth: 16
   chunkPosition: {x: 0, y: 0, z: 0}
   chunkData: 
+  meshRenderer: {fileID: 0}

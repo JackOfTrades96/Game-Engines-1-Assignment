@@ -10,7 +10,7 @@ public class Chunk : MonoBehaviour
 {
     public Material Textures;
 
-    // Chunk(width,height,depth)(16x256x16)
+    // Chunk(width,height,depth)(16x16x16)
     public int chunkWidth = 16;
     public int chunkHeight = 16;
     public int chunkDepth = 16;
@@ -25,6 +25,7 @@ public class Chunk : MonoBehaviour
     //Flat[x + chunkwidth * (y + chunkHeight * z)] = [x, y, z]
     public MeshManager.BlockType[] chunkData;
 
+    public MeshRenderer meshRenderer;
     void BuildChunk()
     {
         int blockCount = chunkWidth * chunkDepth * chunkHeight;
@@ -112,6 +113,7 @@ public class Chunk : MonoBehaviour
 
         MeshFilter mf = this.gameObject.AddComponent<MeshFilter>();
         MeshRenderer mr = this.gameObject.AddComponent<MeshRenderer>();
+        meshRenderer = mr;
         MeshCollider mc = this.gameObject.AddComponent<MeshCollider>();
         
         mr.material = Textures;
