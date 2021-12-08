@@ -32,7 +32,7 @@ public class World : MonoBehaviour
     public GameObject chunkPrefab;
 
     HashSet<Vector3Int> chunkCheck = new HashSet<Vector3Int>();
-    HashSet<Vector3Int> chunkColumns = new HashSet<Vector3Int>();
+    HashSet<Vector2Int> chunkColumns = new HashSet<Vector2Int>();
     Dictionary<Vector3Int, Chunk> chunks = new Dictionary<Vector3Int, Chunk>();
 
     Vector3Int lastPlayerPosition;
@@ -120,6 +120,8 @@ public class World : MonoBehaviour
             }
            
         }
+
+        chunkColumns.Add(new Vector2Int(x, z));
     }
 
 
@@ -183,10 +185,43 @@ public class World : MonoBehaviour
                 int LastPlayerPositionX = (int)(player.transform.position.x / chunkDimensions.x) * chunkDimensions.x;
                 int LastPlayerPositionZ = (int)(player.transform.position.z / chunkDimensions.z) * chunkDimensions.z;
                 chunkColumnBuildQueue.Enqueue(BuildWorld(LastPlayerPositionX, LastPlayerPositionZ, drawRadius));
+                chunkColumnBuildQueue.Enqueue(Hide_Chunk_Columns(LastPlayerPositionX,LastPlayerPositionZ));
             }
 
             yield return UpdateWorldPause;
         }
     }
+
+    public void HideChunkColumn(int x, int z)
+    {
+        for (int y = 0; y < worldDimensions.y; y++)
+        {
+            Vector3Int chunkPosition = new Vector3Int(x, y * chunkDimensions.y, z);
+            if (chunkCheck.Contains(chunkPosition))
+            {
+                chunks[chunkPosition].meshRenderer.enabled = false;
+            }
+
+        }
+    }
+
+
+    IEnumerator Hide_Chunk_Columns(int x, int z)
+    {
+        Vector2Int playerPosition = new Vector2Int(x, z);
+
+        foreach(Vector2Int chunkcolumn in chunkColumns )
+        {
+            if((chunkcolumn - playerPosition).magnitude >= drawRadius * chunkDimensions.x)
+            {
+                HideChunkColumn(chunkcolumn.x,chunkcolumn.y);
+            }
+        }
+
+
+        yield return null;
+    }
+
+
   
 }
