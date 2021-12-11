@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Block
 {
-
-    public Mesh mesh; // block mesh (includes all quad meshes)
+    public Mesh blockMesh; // block mesh (includes all quad meshes)
     Chunk parentChunk;
 
     public Block(Vector3 offset, MeshManager.BlockType blocktype, Chunk chunk)
@@ -16,39 +15,21 @@ public class Block
         if (blocktype != MeshManager.BlockType.Air) // if blocktype is not equal to Air Block.
         {
             List<Quad> quads = new List<Quad>(); // creates list of quads from Quad class
-
             if (!HasSolidNeighbour((int)blockLocalPosition.x, (int)blockLocalPosition.y + 1, (int)blockLocalPosition.z)) // if a Block has no neighbouring block at its x,y or z Coords.
             {
-                if( blocktype == MeshManager.BlockType.GrassSide ) // if block type  is  textured as Grass Side blocks
-                {
-                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, MeshManager.BlockType.GrassTop)); // Add quads form list and Replace texture them with Grass Top Texture
-                }
-
+                if (blocktype == MeshManager.BlockType.GrassSide)
+                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, MeshManager.BlockType.GrassTop));
                 else
-                {
-                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, blocktype));  
-                }
-
-                
+                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, blocktype));
             }
-
-               
 
             if (!HasSolidNeighbour((int)blockLocalPosition.x, (int)blockLocalPosition.y - 1, (int)blockLocalPosition.z))
             {
-                if ( blocktype == MeshManager.BlockType.GrassSide)  // if Bottom blocks are textured as Grass Side blocks
-                {
-                    quads.Add(new Quad(MeshManager.BlockFace.Bottom, offset, MeshManager.BlockType.Dirt)); // Replace them with Dirt Texture
-                }
-
+                if (blocktype == MeshManager.BlockType.GrassSide)
+                    quads.Add(new Quad(MeshManager.BlockFace.Bottom, offset, MeshManager.BlockType.GrassSide));
                 else
-                {
                     quads.Add(new Quad(MeshManager.BlockFace.Bottom, offset, blocktype));
-                }
             }
-               
-
-              
 
             if (!HasSolidNeighbour((int)blockLocalPosition.x, (int)blockLocalPosition.y, (int)blockLocalPosition.z + 1))
                 quads.Add(new Quad(MeshManager.BlockFace.Front, offset, blocktype));
@@ -66,16 +47,16 @@ public class Block
 
             if (quads.Count == 0) return;
 
-            Mesh[] sideMeshes = new Mesh[quads.Count];
-            int m = 0;
+            Mesh[] faceMeshes = new Mesh[quads.Count];
+            int blockMeshAmount = 0;
             foreach (Quad q in quads)
             {
-                sideMeshes[m] = q.quadMesh;
-                m++;
+                faceMeshes[blockMeshAmount] = q.quadMesh;
+                blockMeshAmount++;
             }
 
-            mesh = MeshManager.MergeMeshes(sideMeshes);
-            mesh.name = "Cube_0_0_0";
+            blockMesh = MeshManager.MergeMeshes(faceMeshes);
+            blockMesh.name = "Cube_0_0_0";
         }
     }
 

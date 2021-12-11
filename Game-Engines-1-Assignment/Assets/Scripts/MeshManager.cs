@@ -5,13 +5,11 @@ using VertexData = System.Tuple<UnityEngine.Vector3, UnityEngine.Vector3, UnityE
 
 public static class MeshManager
 {
-    public enum BlockType
-    {
-        GrassTop, GrassSide, Dirt, Water, Stone, Sand, Diamond, Bedrock , Air
+     public enum BlockType {
+        GrassTop, GrassSide, Dirt, Water, Stone, Sand, Diamond, BedRock, Air
     };
 
-    public enum BlockFace { Top, Bottom, Front, Back, Left, Right };
-
+    public enum BlockFace { Top, Bottom, Front, Back, Left, Right};
 
     // Texture Being Used is 1280 x 1280. 16x16 textures. 1/16 = 0.0625
     //First Vector is Bottom Right of Texture, Second Vector is Bottom Left of Texture
@@ -36,41 +34,37 @@ public static class MeshManager
 
     };
 
-    // FractallBrowningMethod(x,y,octaves,Scale,HeightScale,HeightOffset) >y)
-    public static float fBm(float x, float z, int octaves, float Scale, float heightScale, float heightoffset)
+    public static float fBm(float x, float z, int octaves, float scale, float heightScale, float heightOffset)
     {
         float total = 0;
         float frequency = 1;
         for (int i = 0; i < octaves; i++)
         {
-            total += Mathf.PerlinNoise(x * Scale * frequency, z * Scale * frequency) * heightScale;
+            total += Mathf.PerlinNoise(x * scale * frequency, z * scale * frequency) * heightScale;
             frequency *= 2;
         }
-        return total + heightoffset;
+        return total + heightOffset;
+    }
+
+    public static float fBm3D(float x, float y, float z, int octaves, float scale, float heightScale, float heightOffset)
+    {
+        float xy = fBm(x, y, octaves, scale, heightScale, heightOffset);
+        float xz = fBm(x, z, octaves, scale, heightScale, heightOffset);
+        float yx = fBm(y, x, octaves, scale, heightScale, heightOffset);
+        float yz = fBm(y, z, octaves, scale, heightScale, heightOffset);
+        float zx = fBm(z, x, octaves, scale, heightScale, heightOffset);
+        float zy = fBm(z, y, octaves, scale, heightScale, heightOffset);
+       
+        return (xy + yz + xz + yx + zy + zx) / 6.0f;
     }
 
 
-    public static float fBm3D(float x,float y, float z, int octaves, float Scale, float heightScale, float heightoffset)
-    {
-        float xy = fBm(x, y, octaves, Scale, heightScale, heightoffset);
-        float yx = fBm(y, x, octaves, Scale, heightScale, heightoffset);
-        float yz = fBm(y, z, octaves, Scale, heightScale, heightoffset);
-        float zy = fBm(z, y, octaves, Scale, heightScale, heightoffset);
-        float xz = fBm(x, y, octaves, Scale, heightScale, heightoffset);
-        float zx = fBm(z, x, octaves, Scale, heightScale, heightoffset);
-
-        return (xy + yx + yz + zy + xz + zx) /6.0f;
-
-    }
-
-
-    public static Mesh MergeMeshes(Mesh[] meshes)
-    {
+    public static Mesh MergeMeshes(Mesh[] meshes) {
         Mesh mesh = new Mesh();
 
         Dictionary<VertexData, int> pointsOrder = new Dictionary<VertexData, int>();
         HashSet<VertexData> pointsHash = new HashSet<VertexData>();
-        List<int> tris = new List<int>();
+        List<int> triangles = new List<int>();
 
         int pIndex = 0;
         for (int i = 0; i < meshes.Length; i++) //loop through each mesh
@@ -78,12 +72,11 @@ public static class MeshManager
             if (meshes[i] == null) continue;
             for (int j = 0; j < meshes[i].vertices.Length; j++) //loop through each vertex of the current mesh
             {
-                Vector3 v = meshes[i].vertices[j];
-                Vector3 n = meshes[i].normals[j];
-                Vector2 u = meshes[i].uv[j];
-                VertexData p = new VertexData(v, n, u);
-                if (!pointsHash.Contains(p))
-                {
+                Vector3 Vertices = meshes[i].vertices[j];
+                Vector3 Normals = meshes[i].normals[j];
+                Vector2 Uvs = meshes[i].uv[j];
+                VertexData p = new VertexData(Vertices, Normals, Uvs);
+                if (!pointsHash.Contains(p)) {
                     pointsOrder.Add(p, pIndex);
                     pointsHash.Add(p);
 
@@ -92,8 +85,7 @@ public static class MeshManager
 
             }
 
-            for (int t = 0; t < meshes[i].triangles.Length; t++)
-            {
+            for (int t = 0; t < meshes[i].triangles.Length; t++) {
                 int triPoint = meshes[i].triangles[t];
                 Vector3 v = meshes[i].vertices[triPoint];
                 Vector3 n = meshes[i].normals[triPoint];
@@ -102,25 +94,23 @@ public static class MeshManager
 
                 int index;
                 pointsOrder.TryGetValue(p, out index);
-                tris.Add(index);
+                triangles.Add(index);
             }
             meshes[i] = null;
         }
 
         ExtractArrays(pointsOrder, mesh);
-        mesh.triangles = tris.ToArray();
+        mesh.triangles = triangles.ToArray();
         mesh.RecalculateBounds();
         return mesh;
     }
 
-    public static void ExtractArrays(Dictionary<VertexData, int> list, Mesh mesh)
-    {
+    public static void ExtractArrays(Dictionary<VertexData, int> list, Mesh mesh) {
         List<Vector3> verts = new List<Vector3>();
         List<Vector3> norms = new List<Vector3>();
         List<Vector2> uvs = new List<Vector2>();
 
-        foreach (VertexData v in list.Keys)
-        {
+        foreach (VertexData v in list.Keys) {
             verts.Add(v.Item1);
             norms.Add(v.Item2);
             uvs.Add(v.Item3);

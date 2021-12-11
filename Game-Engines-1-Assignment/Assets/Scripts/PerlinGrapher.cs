@@ -10,54 +10,43 @@ public class PerlinGrapher : MonoBehaviour
     public float heightScale = 2;
     [Range(0.0f, 1.0f)]
     public float Scale = 0.5f;
-    [Range(0.0f, 10.0f)]
     public int octaves = 1;
-    
     public float heightOffset = 1;
-    [Range(0.0f,1.0f)]
+    [Range(0.0f, 1.0f)]
     public float probability = 1;
-
-
-     void Start()
+   
+    void Start()
     {
         lineRenderer = this.GetComponent<LineRenderer>();
         lineRenderer.positionCount = 100;
         Graph();
     }
 
-    float fBm(float x, float z)
-    {
-        float total = 0;
-        float frequency = 1;
-        for (int i = 0; i <  octaves; i ++)
-        {
-            total += Mathf.PerlinNoise(x * Scale * frequency, z * Scale * frequency) * heightScale;
-            frequency *= 2; 
-        }
-        return total;
-    }
+    
 
     void Graph()
     {
         lineRenderer = this.GetComponent<LineRenderer>();
         lineRenderer.positionCount = 100;
-
         int z = 0;
         Vector3[] positions = new Vector3[lineRenderer.positionCount];
-        for(int x = 0; x < lineRenderer.positionCount; x ++)
+        for (int x = 0; x < lineRenderer.positionCount; x++)
         {
             float y = MeshManager.fBm(x, z, octaves, Scale, heightScale, heightOffset);
             positions[x] = new Vector3(x, y, z);
-
         }
-
         lineRenderer.SetPositions(positions);
     }
 
-
-     void OnValidate()
+    void OnValidate()
     {
         Graph();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
     }
 
 }

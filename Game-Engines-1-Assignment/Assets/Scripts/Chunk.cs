@@ -15,114 +15,120 @@ public class Chunk : MonoBehaviour
     public int chunkHeight = 16;
     public int chunkDepth = 16;
 
-    
-
     // chunk position within world space
-     public Vector3 chunkPosition;
-
+    public Vector3 chunkPosition;
 
     public Block[,,] blocks;
+
     //Flat[x + chunkwidth * (y + chunkHeight * z)] = [x, y, z]
     public MeshManager.BlockType[] chunkData;
-
     public MeshRenderer meshRenderer;
+
+    CalculateBlockTypes calculateBlockTypes;
+    JobHandle ProcessBlocks;
+
+    struct CalculateBlockTypes : IJobParallelFor
+    {
+        public NativeArray<MeshManager.BlockType> chunkData;
+        public int chunkWidth;
+        public int chunkHeight;
+        public Vector3 chunkPosition;
+        public Unity.Mathematics.Random random;
+
+        public void Execute(int i)
+        {
+            int x = i % chunkWidth + (int)chunkPosition.x;
+            int y = (i / chunkWidth) % chunkHeight + (int)chunkPosition.y;
+            int z = i / (chunkWidth * chunkHeight) + (int)chunkPosition.z;
+
+            random = new Unity.Mathematics.Random(1);
+
+            int surfaceLayerHeight = (int)MeshManager.fBm(x, z, World.dirtLayerSettings.octaves, World.dirtLayerSettings.Scale, World.dirtLayerSettings.heightScale,
+            World.dirtLayerSettings.heightOffset);
+
+            int stoneLayerHeight = (int)MeshManager.fBm(x, z, World.stoneLayerSettings.octaves, World.stoneLayerSettings.Scale, World.stoneLayerSettings.heightScale,
+            World.stoneLayerSettings.heightOffset);
+
+            int diamondTopLayerHeight = (int)MeshManager.fBm(x, z, World.coalTopLayerSettings.octaves, World.coalTopLayerSettings.Scale, World.coalTopLayerSettings.heightScale, World.coalTopLayerSettings.heightOffset);
+
+            int diamondBottomLayerHeight = (int)MeshManager.fBm(x, z, World.coalBottomLayerSettings.octaves,
+                           World.coalBottomLayerSettings.Scale, World.coalBottomLayerSettings.heightScale,
+                           World.coalBottomLayerSettings.heightOffset);
+
+            int CaveLayerHeight = (int)MeshManager.fBm3D(x, y, z, World.caveLayerSettings.octaves,
+                           World.caveLayerSettings.Scale, World.caveLayerSettings.heightScale,
+                           World.caveLayerSettings.heightOffset);
+
+            if (y < 3 )
+            {
+                chunkData[i] = MeshManager.BlockType.BedRock;
+                return;
+            }
+
+            if (CaveLayerHeight < World.caveLayerSettings.probability)
+            {
+                chunkData[i] = MeshManager.BlockType.Air;
+                return;
+            }
+
+            if (surfaceLayerHeight == y)
+            {
+                chunkData[i] = MeshManager.BlockType.GrassSide;
+            }
+
+
+            else if (y < diamondTopLayerHeight && y > diamondBottomLayerHeight && random.NextFloat(1) <= World.coalTopLayerSettings.probability)
+                chunkData[i] = MeshManager.BlockType.Diamond;
+            else if (y < stoneLayerHeight)
+                chunkData[i] = MeshManager.BlockType.Stone;
+            else if (y < surfaceLayerHeight)
+                chunkData[i] = MeshManager.BlockType.Dirt;
+            else
+                chunkData[i] = MeshManager.BlockType.Air;
+        }
+    }
+
     void BuildChunk()
     {
         int blockCount = chunkWidth * chunkDepth * chunkHeight;
         chunkData = new MeshManager.BlockType[blockCount];
-        for (int i = 0; i < blockCount; i++)
+        NativeArray<MeshManager.BlockType> blockTypes = new NativeArray<MeshManager.BlockType>(chunkData, Allocator.Persistent);
+        calculateBlockTypes = new CalculateBlockTypes()
         {
-            int x = i % chunkWidth + (int) chunkPosition.x;
-            int y = i / chunkWidth % chunkHeight + (int) chunkPosition.y;
-            int z = i / (chunkWidth * chunkHeight) + (int) chunkPosition.z;
+            chunkData = blockTypes,
+            chunkWidth = chunkWidth,
+            chunkHeight = chunkHeight,
+            chunkPosition = chunkPosition
+        };
 
-            int surfaceHeight = (int) MeshManager.fBm(x, z, World.surfaceLayerSettings.octaves, World.surfaceLayerSettings.Scale,
-                World.surfaceLayerSettings.heightScale, World.surfaceLayerSettings.heightOffset); 
+        ProcessBlocks = calculateBlockTypes.Schedule(chunkData.Length, 64);
+        ProcessBlocks.Complete();
+        calculateBlockTypes.chunkData.CopyTo(chunkData);
+        blockTypes.Dispose();
+    }
 
-            int stoneHeight = (int)MeshManager.fBm(x, z, World.stoneLayerSettings.octaves, World.stoneLayerSettings.Scale,
-                World.stoneLayerSettings.heightScale, World.stoneLayerSettings.heightOffset);
+   
+    public void CreateChunk(Vector3 chunkDimensions, Vector3 chunkPosition , bool rebuildChunkBlocks = true)
+    {
+        this.chunkPosition = chunkPosition;
+        chunkWidth = (int)chunkDimensions.x;
+        chunkHeight = (int)chunkDimensions.y;
+        chunkDepth = (int)chunkDimensions.z;
 
-            //int caveHeight = (int)MeshManager.fBm3D(x, y, z, World.cavesLayerSettings.octaves, World.cavesLayerSettings.Scale, World.cavesLayerSettings.heightScale, World.cavesLayerSettings.heightOffset);
-
-            // int coalTopHeight = (int)MeshManager.fBm(x, z, World.coalTopLayerSettings.octaves, World.coalTopLayerSettings.Scale,
-            //   World.coalTopLayerSettings.heightScale, World.coalTopLayerSettings.heightOffset);
-
-            // int coalBottomHeight = (int)MeshManager.fBm(x, z, World.coalBottomLayerSettings.octaves, World.coalBottomLayerSettings.Scale,
-            //   World.coalBottomLayerSettings.heightScale, World.coalBottomLayerSettings.heightOffset);
-
-
-            if (y < 3)
-            {
-                chunkData[i] = MeshManager.BlockType.Bedrock;
-                continue;
-            }
-            //if (caveHeight < World.cavesLayerSettings.probability)
-            {
-                //  chunkData[i] = MeshManager.BlockType.Air;
-                //continue
-            }
-
-           
-
-            if (surfaceHeight == y)
-            {
-                chunkData[i] = MeshManager.BlockType.GrassSide; // replaceing Dirt blocks on top layer with grass side blocks.
-                continue;
-            }
-
-
-            else if (y < stoneHeight && UnityEngine.Random.Range(0.0f, 1.0f) <= World.stoneLayerSettings.probability)
-            {
-                chunkData[i] = MeshManager.BlockType.Stone;
-            }
-
-            // else if (y < coalTopHeight && y > coalBottomHeight && UnityEngine.Random.Range(0.0f, 1.0f) <= World.coalTopLayerSettings.probability)
-            //{
-                //  chunkData[i] = MeshManager.BlockType.Coal;
-            //}
-
-            else if (y < surfaceHeight)
-            {
-                chunkData[i] = MeshManager.BlockType.Dirt;
-            }
-                
-            else
-            {
-                chunkData[i] = MeshManager.BlockType.Air;
-
-            }
-
-
-
+        MeshFilter chunkMeshFilter = this.gameObject.AddComponent<MeshFilter>();
+        MeshRenderer chunkMeshRenderer = this.gameObject.AddComponent<MeshRenderer>();
+        meshRenderer = chunkMeshRenderer;
+        chunkMeshRenderer.material = Textures;
+        blocks = new Block[chunkWidth, chunkHeight, chunkDepth];
+        if(rebuildChunkBlocks)
+        {
+            BuildChunk();
         }
-    }
-
-     void Start()
-    {
-        
-    }
-
-      public void CreateChunk(Vector3 dimensions, Vector3 position)
-    {
-        chunkPosition = position;
-
-        chunkWidth = (int) dimensions.x;
-        chunkHeight = (int) dimensions.y;
-        chunkDepth = (int) dimensions.z;
-        
-
-        MeshFilter mf = this.gameObject.AddComponent<MeshFilter>();
-        MeshRenderer mr = this.gameObject.AddComponent<MeshRenderer>();
-        meshRenderer = mr;
-        MeshCollider mc = this.gameObject.AddComponent<MeshCollider>();
-        
-        mr.material = Textures;
-        blocks = new Block [chunkWidth, chunkHeight, chunkDepth];
-        BuildChunk();
+       
 
         var inputMeshes = new List<Mesh>();
         int vertexStart = 0;
-        int triStart = 0;
+        int triangleStart = 0;
         int meshCount = chunkWidth * chunkHeight * chunkDepth;
         int m = 0;
         var jobs = new ProcessMeshDataJob();
@@ -136,16 +142,16 @@ public class Chunk : MonoBehaviour
             {
                 for (int x = 0; x < chunkWidth; x++)
                 {
-                    blocks[x, y, z] = new Block(new Vector3(x, y, z) + chunkPosition, chunkData[x +  chunkWidth * (y + chunkDepth * z)], this);
-                    if (blocks[x, y, z].mesh != null)
+                    blocks[x, y, z] = new Block(new Vector3(x, y, z) + this.chunkPosition, chunkData[x + chunkWidth * (y + chunkDepth * z)], this);
+                    if (blocks[x, y, z].blockMesh != null)
                     {
-                        inputMeshes.Add(blocks[x, y, z].mesh);
-                        var vcount = blocks[x, y, z].mesh.vertexCount;
-                        var icount = (int)blocks[x, y, z].mesh.GetIndexCount(0);
+                        inputMeshes.Add(blocks[x, y, z].blockMesh);
+                        var vcount = blocks[x, y, z].blockMesh.vertexCount;
+                        var icount = (int)blocks[x, y, z].blockMesh.GetIndexCount(0);
                         jobs.vertexStart[m] = vertexStart;
-                        jobs.triStart[m] = triStart;
+                        jobs.triStart[m] = triangleStart;
                         vertexStart += vcount;
-                        triStart += icount;
+                        triangleStart += icount;
                         m++;
                     }
                 }
@@ -155,7 +161,7 @@ public class Chunk : MonoBehaviour
         jobs.meshData = Mesh.AcquireReadOnlyMeshData(inputMeshes);
         var outputMeshData = Mesh.AllocateWritableMeshData(1);
         jobs.outputMesh = outputMeshData[0];
-        jobs.outputMesh.SetIndexBufferParams(triStart, IndexFormat.UInt32);
+        jobs.outputMesh.SetIndexBufferParams(triangleStart, IndexFormat.UInt32);
         jobs.outputMesh.SetVertexBufferParams(vertexStart,
             new VertexAttributeDescriptor(VertexAttribute.Position),
             new VertexAttributeDescriptor(VertexAttribute.Normal, stream: 1),
@@ -164,7 +170,7 @@ public class Chunk : MonoBehaviour
         var handle = jobs.Schedule(inputMeshes.Count, 4);
         var newMesh = new Mesh();
         newMesh.name = "Chunk " + chunkPosition.x + "_" + chunkPosition.y + "_" + chunkPosition.z;
-        var sm = new SubMeshDescriptor(0, triStart, MeshTopology.Triangles);
+        var sm = new SubMeshDescriptor(0, triangleStart, MeshTopology.Triangles);
         sm.firstVertex = 0;
         sm.vertexCount = vertexStart;
 
@@ -178,9 +184,9 @@ public class Chunk : MonoBehaviour
         jobs.triStart.Dispose();
         newMesh.RecalculateBounds();
 
-        mf.mesh = newMesh;
-        mc.sharedMesh = mf.mesh;
-
+        chunkMeshFilter.mesh = newMesh;
+        MeshCollider collider = this.gameObject.AddComponent<MeshCollider>();
+        collider.sharedMesh = chunkMeshFilter.mesh;
     }
 
     [BurstCompile]
@@ -246,9 +252,7 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+    
+    
 }
+

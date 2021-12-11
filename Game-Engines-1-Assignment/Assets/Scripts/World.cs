@@ -11,9 +11,6 @@ public struct PerlinSettings
     public float heightOffset;
     public float probability;
 
-   
-
-
     public PerlinSettings(float HS, float S, int O, float HO, float P)
     {
         heightScale = HS;
@@ -24,12 +21,50 @@ public struct PerlinSettings
     }
 }
 
+
 public class World : MonoBehaviour
 {
-
-    public static Vector3Int worldDimensions = new Vector3Int(4,4,4); // world dimensions (How many chunks within the world)
-    public static Vector3Int chunkDimensions = new Vector3Int(16,16,16); // chunk dimensions (chunkWidth,ChunkHeight,ChunkDepth)
+    public static Vector3Int worldDimensions = new Vector3Int(8, 16, 8);
+    //public static Vector3Int backgroundWorldDimensions = new Vector3Int(4, 16, 4);
+    public static Vector3Int chunkDimensions = new Vector3Int(16, 16, 16);
     public GameObject chunkPrefab;
+    public GameObject IntroCamera;
+    public GameObject Player;
+    public Slider loadingBar;
+
+    public static PerlinSettings dirtLayerSettings;
+    public PerlinGrapher dirtLayer;
+
+    public static PerlinSettings stoneLayerSettings;
+    public PerlinGrapher stoneLayer;
+
+    public static PerlinSettings coalTopLayerSettings;
+    public PerlinGrapher coalTopLayer;
+
+    public static PerlinSettings coalBottomLayerSettings;
+    public PerlinGrapher coalBottomLayer;
+
+    public static PerlinSettings ironTopLayerSettings;
+    public PerlinGrapher ironTopLayer;
+
+    public static PerlinSettings ironBottomLayerSettings;
+    public PerlinGrapher ironBottomLayer;
+
+    public static PerlinSettings goldTopLayerSettings;
+    public PerlinGrapher goldTopLayer;
+
+    public static PerlinSettings goldBottomLayerSettings;
+    public PerlinGrapher goldBottomLayer;
+
+    public static PerlinSettings diamondTopLayerSettings;
+    public PerlinGrapher diamondTopLayer;
+
+    public static PerlinSettings diamondBottomLayerSettings;
+    public PerlinGrapher diamondBottomLayer;
+
+
+    public static PerlinSettings caveLayerSettings;
+    public PerlinGrapher3D caveLayer;
 
     HashSet<Vector3Int> chunkCheck = new HashSet<Vector3Int>();
     HashSet<Vector2Int> chunkColumns = new HashSet<Vector2Int>();
@@ -42,7 +77,7 @@ public class World : MonoBehaviour
 
     IEnumerator ChunkBuildCoordinator()
     {
-        while(true)
+        while (true)
         {
             while (chunkColumnBuildQueue.Count > 0)
                 yield return StartCoroutine(chunkColumnBuildQueue.Dequeue());
@@ -51,143 +86,131 @@ public class World : MonoBehaviour
     }
 
 
-
-    public static PerlinSettings surfaceLayerSettings;
-    public PerlinGrapher surfaceLayer;
-
-    //public static PerlinSettings hillsLayerSettings;
-    //public PerlinGrapher hillsLayer;
-
-    public static PerlinSettings mountainsLayerSettings;
-    //public PerlinGrapher mountainsLayer;
-
-    public static PerlinSettings stoneLayerSettings;
-    public PerlinGrapher stoneLayer;
-
-    // public static PerlinSettings cavesLayerSettings;
-    // public PerlinGrapher3D cavesLayer;
-
-    // public static PerlinSettings coalTopLayerSettings;
-    // public PerlinGrapher coalTopLayer;
-
-    // public static PerlinSettings coalBottomLayerSettings;
-    //public PerlinGrapher coalBottomLayer;
-
-    public static PerlinSettings bedrockLayerSettings;
-    public PerlinGrapher bedrockLayer;
-
-    
-
-    public GameObject IntroCamera;
-    public GameObject player;
-    public Slider loadingBar;
-
-
+  
     void Start()
     {
-       
-        surfaceLayerSettings = new PerlinSettings(surfaceLayer.heightScale, surfaceLayer.Scale, surfaceLayer.octaves, surfaceLayer.heightOffset, surfaceLayer.probability);
-        stoneLayerSettings = new PerlinSettings(stoneLayer.heightScale, stoneLayer.Scale, stoneLayer.octaves, stoneLayer.heightOffset, stoneLayer.probability);
-        //cavesLayerSettings = new PerlinSettings(cavesLayer.heightScale, cavesLayer.Scale, cavesLayer.octaves, cavesLayer.heightOffset, cavesLayer.CutOff);
-        //coalTopLayerSettings = new PerlinSettings(coalTopLayer.heightScale, coalTopLayer.Scale, coalTopLayer.octaves, coalTopLayer.heightOffset, coalTopLayer.probability);
-        //coalBottomLayerSettings = new PerlinSettings(coalBottomLayer.heightScale, coalBottomLayer.Scale, coalBottomLayer.octaves, coalBottomLayer.heightOffset, coalBottomLayer.probability);
+        loadingBar.maxValue = worldDimensions.x * worldDimensions.z;
+
+        dirtLayerSettings = new PerlinSettings(dirtLayer.heightScale, dirtLayer.scale,
+                                     dirtLayer.octaves, dirtLayer.heightOffset, dirtLayer.probability);
+
+        stoneLayerSettings = new PerlinSettings(stoneLayer.heightScale, stoneLayer.scale,
+                             stoneLayer.octaves, stoneLayer.heightOffset, stoneLayer.probability);
+
+        coalTopLayerSettings = new PerlinSettings(coalTopLayer.heightScale, coalTopLayer.scale,
+                     coalTopLayer.octaves, coalTopLayer.heightOffset, coalTopLayer.probability);
+
+        coalBottomLayerSettings = new PerlinSettings(coalBottomLayer.heightScale, coalBottomLayer.scale,
+                     coalBottomLayer.octaves, coalBottomLayer.heightOffset, coalBottomLayer.probability);
+
+        caveLayerSettings = new PerlinSettings(caveLayer.heightScale, caveLayer.scale,
+             caveLayer.octaves, caveLayer.heightOffset, caveLayer.DrawCutOff);
 
         StartCoroutine(BuildWorld());
-        loadingBar.maxValue = worldDimensions.x * worldDimensions.z; // loadingBar max value set to amount of chunks in world by using the x, y and z values of the world dimensions
-
     }
 
-    void BuildChunkColumn(int x, int z)
+    private void Update()
+    {
+       
+    }
+
+
+    void BuildChunkColumn(int x, int z, bool meshEnabled = true)
     {
         for (int y = 0; y < worldDimensions.y; y++)
         {
-            Vector3Int chunkPosition = new Vector3Int(x , y * chunkDimensions.y, z );
-
-            if(!chunkCheck.Contains(chunkPosition))
+            Vector3Int position = new Vector3Int(x, y * chunkDimensions.y, z);
+            if (!chunkCheck.Contains(position))
             {
                 GameObject chunk = Instantiate(chunkPrefab);
-
-                chunk.name = "Chunk: " + chunkPosition.x + chunkPosition.y + chunkPosition.z;
+                chunk.name = "Chunk_" + position.x + "_" + position.y + "_" + position.z;
                 Chunk c = chunk.GetComponent<Chunk>();
-                c.CreateChunk(chunkDimensions, chunkPosition);
-                chunkCheck.Add(chunkPosition);
-                chunks.Add(chunkPosition, c);
+                c.CreateChunk(chunkDimensions, position);
+                chunkCheck.Add(position);
+                chunks.Add(position, c);
             }
+            chunks[position].meshRenderer.enabled = meshEnabled;
 
-            else
-            {
-                chunks[chunkPosition].meshRenderer.enabled = true;
-            }
-           
+
         }
-
         chunkColumns.Add(new Vector2Int(x, z));
     }
 
+  /*  IEnumerator BuildExtraWorld()
+    {
+        int zEnd = worldDimensions.z + backgroundWorldDimensions.z;
+        int zStart = worldDimensions.z - 1;
+        int xEnd = worldDimensions.x + backgroundWorldDimensions.x;
+        int xStart = worldDimensions.x - 1;
 
-    // Corotuine is necessary to allow world to be built and render without any crashes
+
+        for (int z = zStart; z < zEnd; z++)
+        {
+            for (int x = 0; x < xEnd; x++)
+            {
+                BuildChunkColumn(x * chunkDimensions.x, z * chunkDimensions.z, false);
+                yield return null;
+            }
+
+        }
+
+        for (int z = 0; z < zEnd; z++)
+        {
+            for (int x = xStart; x < xEnd; x++)
+            {
+                BuildChunkColumn(x * chunkDimensions.x, z * chunkDimensions.z, false);
+                yield return null;
+            }
+
+        }
+
+
+    }
+  */
+
+
     IEnumerator BuildWorld()
     {
         for (int z = 0; z < worldDimensions.z; z++)
         {
-                for (int x = 0; x < worldDimensions.x; x++)
-                {
-                    BuildChunkColumn(x * chunkDimensions.x,z * chunkDimensions.z);
-                    loadingBar.value++; 
-                    yield return null;
+            for (int x = 0; x < worldDimensions.x; x++)
+            {
+                BuildChunkColumn(x * chunkDimensions.x, z * chunkDimensions.z);
+                loadingBar.value++;
+                yield return null;
+            }
 
-                }
         }
 
         IntroCamera.SetActive(false);
-        player.SetActive(true);
+     
 
-        float xposition = (worldDimensions.x * chunkDimensions.x) /2.0f;
-        float zposition = (worldDimensions.z * chunkDimensions.z) / 2.0f;
-        Chunk playerChunk = chunkPrefab.GetComponent<Chunk>();
-        player.transform.position = new Vector3(xposition, 100, zposition);
+        int xpos = (worldDimensions.x * chunkDimensions.x) / 2;
+        int zpos = (worldDimensions.z * chunkDimensions.z) / 2;
 
-        lastPlayerPosition = Vector3Int.CeilToInt(player.transform.position);
+        
+        Player.transform.position = new Vector3(xpos, 100, zpos);
+        loadingBar.gameObject.SetActive(false);
+        Player.SetActive(true);
+        lastPlayerPosition = Vector3Int.CeilToInt(Player.transform.position);
         StartCoroutine(ChunkBuildCoordinator());
         StartCoroutine(UpdateWorld());
-      
-    }
-
-    IEnumerator BuildWorld(int x, int z, int rad)
-    {
-        int nextRad = rad - 1;
-        if (rad <= 0) yield break;
-
-        BuildChunkColumn(x + chunkDimensions.x, z);
-        chunkColumnBuildQueue.Enqueue(BuildWorld(x, z + chunkDimensions.z, nextRad));
-
-        BuildChunkColumn(x - chunkDimensions.x, z );
-        chunkColumnBuildQueue.Enqueue(BuildWorld(x, z + chunkDimensions.z, nextRad));
-
-        BuildChunkColumn(x, z + chunkDimensions.z);
-        chunkColumnBuildQueue.Enqueue(BuildWorld(x, z + chunkDimensions.z, nextRad));
-
-        BuildChunkColumn(x, z - chunkDimensions.z);
-        chunkColumnBuildQueue.Enqueue(BuildWorld(x, z + chunkDimensions.z, nextRad));
-        yield return null;
+        //StartCoroutine(BuildExtraWorld());
     }
 
     WaitForSeconds UpdateWorldPause = new WaitForSeconds(0.5f);
-
     IEnumerator UpdateWorld()
     {
         while (true)
         {
-            if((lastPlayerPosition - player.transform.position).magnitude > chunkDimensions.x)
+            if ((lastPlayerPosition - Player.transform.position).magnitude > (chunkDimensions.x))
             {
-
-                lastPlayerPosition = Vector3Int.CeilToInt(player.transform.position);
-                int LastPlayerPositionX = (int)(player.transform.position.x / chunkDimensions.x) * chunkDimensions.x;
-                int LastPlayerPositionZ = (int)(player.transform.position.z / chunkDimensions.z) * chunkDimensions.z;
-                chunkColumnBuildQueue.Enqueue(BuildWorld(LastPlayerPositionX, LastPlayerPositionZ, drawRadius));
-                chunkColumnBuildQueue.Enqueue(Hide_Chunk_Columns(LastPlayerPositionX,LastPlayerPositionZ));
+                lastPlayerPosition = Vector3Int.CeilToInt(Player.transform.position);
+                int posx = (int)(Player.transform.position.x / chunkDimensions.x) * chunkDimensions.x;
+                int posz = (int)(Player.transform.position.z / chunkDimensions.z) * chunkDimensions.z;
+                chunkColumnBuildQueue.Enqueue(BuildRecursiveWorld(posx, posz, drawRadius));
+                chunkColumnBuildQueue.Enqueue(Hide_Chunk_Columns(posx, posz));
             }
-
             yield return UpdateWorldPause;
         }
     }
@@ -196,32 +219,49 @@ public class World : MonoBehaviour
     {
         for (int y = 0; y < worldDimensions.y; y++)
         {
-            Vector3Int chunkPosition = new Vector3Int(x, y * chunkDimensions.y, z);
-            if (chunkCheck.Contains(chunkPosition))
+            Vector3Int pos = new Vector3Int(x, y * chunkDimensions.y, z);
+            if (chunkCheck.Contains(pos))
             {
-                chunks[chunkPosition].meshRenderer.enabled = false;
+                chunks[pos].meshRenderer.enabled = false;
             }
-
         }
     }
-
 
     IEnumerator Hide_Chunk_Columns(int x, int z)
     {
         Vector2Int playerPosition = new Vector2Int(x, z);
-
-        foreach(Vector2Int chunkcolumn in chunkColumns )
+        foreach (Vector2Int cc in chunkColumns)
         {
-            if((chunkcolumn - playerPosition).magnitude >= drawRadius * chunkDimensions.x)
+            if ((cc - playerPosition).magnitude >= drawRadius * chunkDimensions.x)
             {
-                HideChunkColumn(chunkcolumn.x,chunkcolumn.y);
+                HideChunkColumn(cc.x, cc.y);
             }
         }
-
-
         yield return null;
     }
 
+    IEnumerator BuildRecursiveWorld(int x, int z, int rad)
+    {
+        int nextrad = rad - 1;
+        if (rad <= 0) yield break;
 
-  
+        BuildChunkColumn(x, z + chunkDimensions.z);
+        chunkColumnBuildQueue.Enqueue(BuildRecursiveWorld(x, z + chunkDimensions.z, nextrad));
+        yield return null;
+
+        BuildChunkColumn(x, z - chunkDimensions.z);
+        chunkColumnBuildQueue.Enqueue(BuildRecursiveWorld(x, z - chunkDimensions.z, nextrad));
+        yield return null;
+
+        BuildChunkColumn(x + chunkDimensions.x, z);
+        chunkColumnBuildQueue.Enqueue(BuildRecursiveWorld(x + chunkDimensions.x, z, nextrad));
+        yield return null;
+
+        BuildChunkColumn(x - chunkDimensions.x, z);
+        chunkColumnBuildQueue.Enqueue(BuildRecursiveWorld(x - chunkDimensions.x, z, nextrad));
+        yield return null;
+    }
+
 }
+
+
