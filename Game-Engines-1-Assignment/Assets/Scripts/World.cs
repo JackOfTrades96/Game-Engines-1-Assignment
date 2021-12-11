@@ -91,20 +91,20 @@ public class World : MonoBehaviour
     {
         loadingBar.maxValue = worldDimensions.x * worldDimensions.z;
 
-        dirtLayerSettings = new PerlinSettings(dirtLayer.heightScale, dirtLayer.scale,
+        dirtLayerSettings = new PerlinSettings(dirtLayer.heightScale, dirtLayer.Scale,
                                      dirtLayer.octaves, dirtLayer.heightOffset, dirtLayer.probability);
 
-        stoneLayerSettings = new PerlinSettings(stoneLayer.heightScale, stoneLayer.scale,
+        stoneLayerSettings = new PerlinSettings(stoneLayer.heightScale, stoneLayer.Scale,
                              stoneLayer.octaves, stoneLayer.heightOffset, stoneLayer.probability);
 
-        coalTopLayerSettings = new PerlinSettings(coalTopLayer.heightScale, coalTopLayer.scale,
+        coalTopLayerSettings = new PerlinSettings(coalTopLayer.heightScale, coalTopLayer.Scale,
                      coalTopLayer.octaves, coalTopLayer.heightOffset, coalTopLayer.probability);
 
-        coalBottomLayerSettings = new PerlinSettings(coalBottomLayer.heightScale, coalBottomLayer.scale,
+        coalBottomLayerSettings = new PerlinSettings(coalBottomLayer.heightScale, coalBottomLayer.Scale,
                      coalBottomLayer.octaves, coalBottomLayer.heightOffset, coalBottomLayer.probability);
 
-        caveLayerSettings = new PerlinSettings(caveLayer.heightScale, caveLayer.scale,
-             caveLayer.octaves, caveLayer.heightOffset, caveLayer.DrawCutOff);
+        caveLayerSettings = new PerlinSettings(caveLayer.heightScale, caveLayer.Scale,
+             caveLayer.octaves, caveLayer.heightOffset, caveLayer.CutOff);
 
         StartCoroutine(BuildWorld());
     }

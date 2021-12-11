@@ -18,7 +18,7 @@ public class Block
             if (!HasSolidNeighbour((int)blockLocalPosition.x, (int)blockLocalPosition.y + 1, (int)blockLocalPosition.z)) // if a Block has no neighbouring block at its x,y or z Coords.
             {
                 if (blocktype == MeshManager.BlockType.GrassSide)
-                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, MeshManager.BlockType.GrassTop));
+                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, MeshManager.BlockType.GrassTop)); // Set Top quad texture on surface Blocks to Grass.
                 else
                     quads.Add(new Quad(MeshManager.BlockFace.Top, offset, blocktype));
             }
