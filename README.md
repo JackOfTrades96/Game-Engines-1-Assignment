@@ -76,11 +76,11 @@ if the player left clicks they will remove the block they clicked on, allowing t
 		Vector3 v6 = new Vector3(0.5f, 0.5f, -0.5f) + vertexOffset;
 		Vector3 v7 = new Vector3(-0.5f, 0.5f, -0.5f) + vertexOffset;
   
-  ```
+```
   
   - Once the vertice, normals, uvs and triangles are created, a switch statement is used to set up each block face. 
   
-  ```
+```
 
 		switch (face) // Using a  switch statement to set the vertices, normals and uvs of each Quad Face that will make up each Block.
 		{
@@ -146,7 +146,7 @@ if the player left clicks they will remove the block they clicked on, allowing t
 
 - The Volume of each quadmesh is then recalculated.
   
-  ```
+ ```
 
 		//setting each qaud vertices, normals ,uvs and trianlge to the ones  in the vaules in the arrays.
 
@@ -158,7 +158,7 @@ if the player left clicks they will remove the block they clicked on, allowing t
 		//Recaluate the bounding volume of the mesh from the veritices.
 		quadMesh.RecalculateBounds();
   
-
+```
 
 - The Block Script  is then used  to define each block within its chunk.
 
@@ -255,11 +255,13 @@ if the player left clicks they will remove the block they clicked on, allowing t
 - The Mesh Manager Then takes the 6 quads Meshes and merges them togther to make a single block mesh.
 - The Tuple system is used to create a data of vertices, normlas and uvs, while getting rid of any duplicte values form different quad meshes.
 
+
 ```
 using Data = System.Tuple<UnityEngine.Vector3, UnityEngine.Vector3, UnityEngine.Vector2>;
 ```
 
 - The Block Type enum defines what type each block within their chunks will be.
+
 
 ```
  public enum BlockType // Using a enum for each block texture which is used in the chunk script to texture each block to its correct block type.
@@ -269,6 +271,7 @@ using Data = System.Tuple<UnityEngine.Vector3, UnityEngine.Vector3, UnityEngine.
 ```
 
 - The Block Face enum defines which part each blokc quad will be.
+
 
 ```
  public enum BlockFace { Top, Bottom, Front, Back, Left, Right}; // Using a enum which is used in the quad scripts switch statement to create each quad face.
@@ -401,6 +404,7 @@ public static void ExtractArrays(Dictionary<Data, int> list, Mesh blockMesh)
 - In the Chunk Script the blocks are generated within the game world in chunks.
 - In order to first create the chunks within the game world the CreateChunk Function is used.
 - The CreateChunk function creates the chunk by using a nested for loop using the chunkdepth,chunkheight and chunkwidth.
+
 ```
  for (int z = 0; z < chunkDepth; z++)
         {
@@ -416,6 +420,7 @@ public static void ExtractArrays(Dictionary<Data, int> list, Mesh blockMesh)
                 }
             }
         }
+	
 ```
 
 - In order to render the chunk the unitys jobs system is used for optimal performace.
@@ -455,7 +460,7 @@ var inputMeshes = new List<Mesh>();
                         vertexStart += vertexCount;
                         triangleStart += icount;
                         m++;
-        
+```        
 
 
 
@@ -466,8 +471,8 @@ var inputMeshes = new List<Mesh>();
 - In order to prevent a memory leak the Native Arrays that were used to convert the values are disposed.
  
 
-```
 
+```
 
         [ReadOnly] public Mesh.MeshDataArray meshData;
         public Mesh.MeshData outputMesh;
@@ -528,10 +533,10 @@ var inputMeshes = new List<Mesh>();
 
         }
     
-
-                                                   
-                                                   
 ```
+                                                   
+                                                   
+
                                                    
                                                    
 - The vertices and triangle outputmeshs from  job is then passed though the  CreateChunk function.
@@ -548,6 +553,7 @@ var inputMeshes = new List<Mesh>();
         jobs.vertexStart = new NativeArray<int>(meshCount, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
         jobs.triangleStart = new NativeArray<int>(meshCount, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
 ```
+
 - The  4 jobs needed are created within the CreateChunk function with the new mesh for the chunk.
 
 - The job mesh data is then disposed of and the var newMesh volume is recalculated.
@@ -621,7 +627,8 @@ var inputMeshes = new List<Mesh>();
     }
 ```
 
-- The Execute function is used to determine how the chunk meshs are rendered between each Perlin Noise Graph
+- The Execute function is used to determine how the chunk meshs are rendered between each Perlin Noise Graph.
+
 ```
 int x = i % chunkWidth + (int)chunkPosition.x;
             int y = (i / chunkWidth) % chunkHeight + (int)chunkPosition.y;
@@ -709,6 +716,7 @@ int x = i % chunkWidth + (int)chunkPosition.x;
 - The chunk dimensions are set to (16,16,16) blocks within each chunk.
 - To generate the terrain layers each layer uses a Pelin Graph and its own individual Perlin settings.
 
+
 ```
  public static Vector3Int worldDimensions = new Vector3Int(8, 8, 8); // the world Dimensions realtive to chunks (8 chunks on x axis, 8 chunks on y axis, 8 chunks on the z axis)
     public static Vector3Int chunkDimensions = new Vector3Int(16, 16, 16); //the chunk Dimensions relactive to the blocks (16 blocks on x axis in chunk, 16 blocks on the y axis, 16 blocks on the z axis)
@@ -737,6 +745,7 @@ int x = i % chunkWidth + (int)chunkPosition.x;
    
     public static PerlinSettings caveLayerSettings;
     public PerlinGrapher3D caveLayer;
+    
 ```
 
 - On start the loading is set to the world Dimensions values and each of the perlin Noise Settings are created.
@@ -834,8 +843,9 @@ public void HideChunkPrefabs(int x, int z)
 
 ```
 - TheBuildHiddenWorld Coroutine is used to create the new chunks that are needed when the player moves around the game world.
-~~~
+	
 
+```
  IEnumerator BuildHiddenWorld(int x, int z, int rad)
     {
         int nextrad = rad - 1;
@@ -857,8 +867,8 @@ public void HideChunkPrefabs(int x, int z)
         chunkPrefabBuildQueue.Enqueue(BuildHiddenWorld(x - chunkDimensions.x, z, nextrad));
         yield return null;
     }
-~~~
 
+```
 
  - The Update World Coroutine is then used to determine which chunk prefabs are needed to be hidden by using a Vector3Int value set from the players position.
  - The ChunkPrefabBuildQueue are the two coroutine Queue used when handling the BuildHiddenWorld and Hide_Chunk_Prefabs cooroutines.
@@ -880,6 +890,7 @@ public void HideChunkPrefabs(int x, int z)
             yield return UpdateWorldPause;
         }
     }
+    
 ```
 
 
@@ -965,15 +976,66 @@ public static float fBm3D(float x, float y, float z, int octaves, float scale, f
         return (xy + yz + xz + yx + zy + zx) / 6.0f; // combine the 6 perlin noises values and divide by 6 to get the Perlin noise average of the area.
     }
 }
+
 ```
 
 
 
 - In order to creat the caves using the 3D perlin noise a Perlin graph 3D is used.
-- Similar to the perlin graph 2D, this class first creates the cave blocks by using a nesteeed for loop with the caveDimenions z, y and x values.
-- The cave itslef is then created with the Perlin Graph function by taking the caveblocks that were created within the first function and looped again.
+- Similar to the perlin graph 2D, this class first creates the cave blocks by using a nesteed for loop with the caveDimenions z, y and x values.
+- The cave itself is then created with the Perlin Graph function by taking the caveblocks that were created within the first function and looped again.
 
+```
 
+    Vector3 CaveDimensions = new Vector3(8,8,8); // 8x8x8 blocks 
+
+    void CreateCaveBlocks()
+    {
+        for (int z = 0; z < CaveDimensions.z; z++)
+        {
+            for (int y = 0; y < CaveDimensions.y; y++)
+            {
+                for (int x = 0; x < CaveDimensions.x; x++)
+                {
+                    GameObject CaveBlocks = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    CaveBlocks.name = "Perlin_3D_CaveBlock";
+                    CaveBlocks.transform.parent = this.transform;
+                    CaveBlocks.transform.position = new Vector3(x, y, z);
+                }
+            }
+        }
+    }
+
+    void Graph()
+    {
+        
+        MeshRenderer[] cubes = this.GetComponentsInChildren<MeshRenderer>();
+        if (cubes.Length == 0)
+            CreateCaveBlocks();
+
+        if (cubes.Length == 0) return;
+
+        for (int z = 0; z < CaveDimensions.z; z++)
+        {
+            for (int y = 0; y < CaveDimensions.y; y++)
+            {
+                for (int x = 0; x < CaveDimensions.x; x++)
+                {
+                    float PerlinNoise3D = FractalBrownianMotion3D.fBm3D(x, y, z, octaves, Scale, heightScale, heightOffset);
+                    if (PerlinNoise3D < Probability)
+                        cubes[x + (int)CaveDimensions.x * (y + (int)CaveDimensions.z * z)].enabled = false;
+                    else
+                        cubes[x + (int)CaveDimensions.x * (y + (int)CaveDimensions.z * z)].enabled = true;
+                }
+            }
+        }
+    }
+
+    void OnValidate()
+    {
+        Graph();
+    }
+```
 
 - The player script is used so that the player can explore underneath the surface layer.
 - Using raycasting when the player left clicks a raycast hits a block within a chunk. 
@@ -1020,17 +1082,10 @@ public static float fBm3D(float x, float y, float z, int octaves, float scale, f
 
             }
         }
-```
+
 ```
 
  
-
-
-
-
-
-
-
 # List of Classes/Asset With Sources
 
 |Class|Source|
