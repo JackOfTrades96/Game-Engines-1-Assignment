@@ -4,16 +4,14 @@ using UnityEngine;
 
 public class PerlinGrapher3D : MonoBehaviour
 {
-  
+  // Perlin Graph SETTINGS
     public float heightScale = 2;
-    [Range(0.0f, 1.0f)]
     public float Scale = 0.5f;
     public int octaves = 1;
     public float heightOffset = 1;
-    [Range(0.0f, 10.0f)]
-    public float CutOff = 1;
+    public float Probability = 1;
 
-    Vector3 CaveDimensions = new Vector3(10, 10, 10);
+    Vector3 CaveDimensions = new Vector3(8,8,8); // 8x8x8 blocks 
 
     void CreateCaveBlocks()
     {
@@ -47,8 +45,8 @@ public class PerlinGrapher3D : MonoBehaviour
             {
                 for (int x = 0; x < CaveDimensions.x; x++)
                 {
-                    float p3d = MeshManager.fBm3D(x, y, z, octaves, Scale, heightScale, heightOffset);
-                    if (p3d < CutOff)
+                    float PerlinNoise3D = FractalBrownianMotion3D.fBm3D(x, y, z, octaves, Scale, heightScale, heightOffset);
+                    if (PerlinNoise3D < Probability)
                         cubes[x + (int)CaveDimensions.x * (y + (int)CaveDimensions.z * z)].enabled = false;
                     else
                         cubes[x + (int)CaveDimensions.x * (y + (int)CaveDimensions.z * z)].enabled = true;

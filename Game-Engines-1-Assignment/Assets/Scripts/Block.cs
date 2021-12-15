@@ -15,35 +15,35 @@ public class Block
         if (blocktype != MeshManager.BlockType.Air) // if blocktype is not equal to Air Block.
         {
             List<Quad> quads = new List<Quad>(); // creates list of quads from Quad class
-            if (!HasSolidNeighbour((int)blockLocalPosition.x, (int)blockLocalPosition.y + 1, (int)blockLocalPosition.z)) // if a Block has no neighbouring block at its x,y or z Coords.
+            if (!BlockHasNeigbour((int)blockLocalPosition.x, (int)blockLocalPosition.y + 1, (int)blockLocalPosition.z)) // if a Block has no neighbouring block above it on the y axis.
             {
-                if (blocktype == MeshManager.BlockType.GrassSide)
-                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, MeshManager.BlockType.GrassTop)); // Set Top quad texture on surface Blocks to Grass.
+                if (blocktype == MeshManager.BlockType.GrassOnSide) // if block type is set to GrassOnSide Texture
+                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, MeshManager.BlockType.GrassOnTop)); // Set Top quad texture on surface Block to GrassOnTop.
                 else
-                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, blocktype));
+                    quads.Add(new Quad(MeshManager.BlockFace.Top, offset, blocktype)); // else add  quad to blokc and  set the top quad texture to whatever its blocktype states.
             }
 
-            if (!HasSolidNeighbour((int)blockLocalPosition.x, (int)blockLocalPosition.y - 1, (int)blockLocalPosition.z))
+            if (!BlockHasNeigbour((int)blockLocalPosition.x, (int)blockLocalPosition.y - 1, (int)blockLocalPosition.z)) // if a Block has no neighbouring block below it on the y axis.
             {
-                if (blocktype == MeshManager.BlockType.GrassSide)
-                    quads.Add(new Quad(MeshManager.BlockFace.Bottom, offset, MeshManager.BlockType.GrassSide));
+                if (blocktype == MeshManager.BlockType.GrassOnSide) // if block type is set to GrassOnSide Texture
+                    quads.Add(new Quad(MeshManager.BlockFace.Bottom, offset, MeshManager.BlockType.GrassOnSide)); // Set Top quad texture on surface Block to GrassOnSide.
                 else
-                    quads.Add(new Quad(MeshManager.BlockFace.Bottom, offset, blocktype));
+                    quads.Add(new Quad(MeshManager.BlockFace.Bottom, offset, blocktype)); // else set the top quad texture to whatever its blocktype states.
             }
 
-            if (!HasSolidNeighbour((int)blockLocalPosition.x, (int)blockLocalPosition.y, (int)blockLocalPosition.z + 1))
-                quads.Add(new Quad(MeshManager.BlockFace.Front, offset, blocktype));
+            if (!BlockHasNeigbour((int)blockLocalPosition.x, (int)blockLocalPosition.y, (int)blockLocalPosition.z + 1)) // if a Block has no neighbouring block in front of it on the z axis.
+                quads.Add(new Quad(MeshManager.BlockFace.Front, offset, blocktype));  //  Add  quad to block and  set the Front quad texture to whatever its blocktype states.
 
-            if (!HasSolidNeighbour((int)blockLocalPosition.x, (int)blockLocalPosition.y, (int)blockLocalPosition.z - 1))
-                quads.Add(new Quad(MeshManager.BlockFace.Back, offset, blocktype));
+            if (!BlockHasNeigbour((int)blockLocalPosition.x, (int)blockLocalPosition.y, (int)blockLocalPosition.z - 1))  // if a Block has no neighbouring block  behind  it on the z axis.
+                quads.Add(new Quad(MeshManager.BlockFace.Back, offset, blocktype)); //  Add  quad to block and  set the Back quad texture to whatever its blocktype states.
 
-            if (!HasSolidNeighbour((int)blockLocalPosition.x - 1, (int)blockLocalPosition.y, (int)blockLocalPosition.z))
-                quads.Add(new Quad(MeshManager.BlockFace.Left, offset, blocktype));
+            if (!BlockHasNeigbour((int)blockLocalPosition.x - 1, (int)blockLocalPosition.y, (int)blockLocalPosition.z)) // if a Block has no neighbouring block to the left of it on the x axis.
+                quads.Add(new Quad(MeshManager.BlockFace.Left, offset, blocktype)); //  Add  quad to block and  set the Left quad texture to whatever its blocktype states.
 
-            if (!HasSolidNeighbour((int)blockLocalPosition.x + 1, (int)blockLocalPosition.y, (int)blockLocalPosition.z))
-                quads.Add(new Quad(MeshManager.BlockFace.Right, offset, blocktype));
-           
-           
+            if (!BlockHasNeigbour((int)blockLocalPosition.x + 1, (int)blockLocalPosition.y, (int)blockLocalPosition.z))  // if a Block has no neighbouring block to the right of it on the x axis.
+                quads.Add(new Quad(MeshManager.BlockFace.Right, offset, blocktype)); //  Add quad to block and set the Right quad texture to whatever its blocktype states.
+
+
 
             if (quads.Count == 0) return;
 
@@ -60,7 +60,7 @@ public class Block
         }
     }
 
-    public bool HasSolidNeighbour(int x, int y, int z)
+    public bool BlockHasNeigbour(int x, int y, int z)
     {
         if (x < 0 || x >= parentChunk.chunkWidth ||
             y < 0 || y >= parentChunk.chunkHeight ||
@@ -68,9 +68,9 @@ public class Block
         {
             return false;
         }
-        if (parentChunk.chunkData[x + parentChunk.chunkWidth * (y + parentChunk.chunkDepth * z)] == MeshManager.BlockType.Air
-            || parentChunk.chunkData[x + parentChunk.chunkWidth * (y + parentChunk.chunkDepth * z)] == MeshManager.BlockType.Water)
+        if (parentChunk.chunkData[x + parentChunk.chunkWidth * (y + parentChunk.chunkDepth * z)] == MeshManager.BlockType.Air) 
+           
             return false;
-        return true;
+            return true;
     }
 }

@@ -7,13 +7,11 @@ using UnityEngine;
 public class PerlinGrapher : MonoBehaviour
 {
     public LineRenderer lineRenderer;
-    public float heightScale = 2;
-    [Range(0.0f, 1.0f)]
-    public float Scale = 0.5f;
+    public float heightScale = 2; // Adjust height of the Perlin Graph.
+    public float Scale = 0.5f; // The Perlin Noise Scale.
     public int octaves = 1;
-    public float heightOffset = 1;
-    [Range(0.0f, 1.0f)]
-    public float probability = 1;
+    public float heightOffset = 1; 
+    public float probability = 1; // The probality of the block texture being rendered.
    
     void Start()
     {
@@ -23,7 +21,7 @@ public class PerlinGrapher : MonoBehaviour
     }
 
     
-
+    // Graph Function draws the linerender to show the Perlin Settings 
     void Graph()
     {
         lineRenderer = this.GetComponent<LineRenderer>();
@@ -32,7 +30,7 @@ public class PerlinGrapher : MonoBehaviour
         Vector3[] positions = new Vector3[lineRenderer.positionCount];
         for (int x = 0; x < lineRenderer.positionCount; x++)
         {
-            float y = MeshManager.fBm(x, z, octaves, Scale, heightScale, heightOffset);
+            float y = FractalBrownianMotion.fBm(x, z, octaves, Scale, heightScale, heightOffset);
             positions[x] = new Vector3(x, y, z);
         }
         lineRenderer.SetPositions(positions);
@@ -41,12 +39,6 @@ public class PerlinGrapher : MonoBehaviour
     void OnValidate()
     {
         Graph();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
 }

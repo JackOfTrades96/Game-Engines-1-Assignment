@@ -43,7 +43,7 @@ public class PlayerManager : MonoBehaviour
 
                 int i = hitBlockX + World.chunkDimensions.x * (hitBlockY + World.chunkDimensions.z * hitBlockZ); //(x + chunkWidth * (y + chunkDepth * z))
 
-                diggingChunk.chunkData[i] = MeshManager.BlockType.Air; // On Left Mouse Click set the block clicked on within its chunk to have the air texture.
+                diggingChunk.chunkData[i] = MeshManager.BlockType.Air; // On Left Mouse Click  the block clicked on within its chunk si retextured as an Air Block.
                 DestroyImmediate(diggingChunk.GetComponent<MeshFilter>());
                 DestroyImmediate(diggingChunk.GetComponent<MeshRenderer>());
                 DestroyImmediate(diggingChunk.GetComponent<Collider>());

@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f21c58dcb57381d42a2be9a675dc6cd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Textures: {fileID: 2100000, guid: f0dbd491fa27fc14ea4b185bc90f10f7, type: 2}
+  Textures: {fileID: 2100000, guid: 2af9212751c68ff499fc7f1f9c5859d1, type: 2}
   chunkWidth: 16
   chunkHeight: 16
   chunkDepth: 16

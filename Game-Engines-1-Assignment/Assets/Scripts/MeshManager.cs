@@ -1,123 +1,119 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using VertexData = System.Tuple<UnityEngine.Vector3, UnityEngine.Vector3, UnityEngine.Vector2>;
+using Data = System.Tuple<UnityEngine.Vector3, UnityEngine.Vector3, UnityEngine.Vector2>;
+// Using a Tuple to contain the vertice, normal and uv data.
 
+//The MeshManager Script sets out each block texture  
 public static class MeshManager
 {
-     public enum BlockType {
-        GrassTop, GrassSide, Dirt, Water, Stone, Sand, Diamond, BedRock, Air
+
+     public enum BlockType // Using a enum for each block texture which is used in the chunk script to texture each block to its correct block type.
+    {
+        GrassOnSide, GrassOnTop, Dirt, Stone, Iron, BedRock, Air
     };
 
-    public enum BlockFace { Top, Bottom, Front, Back, Left, Right};
+    public enum BlockFace { Top, Bottom, Front, Back, Left, Right}; // Using a enum which is used in the quad scripts switch statement to create each quad face.
 
-    // Texture Being Used is 1280 x 1280. 16x16 textures. 1/16 = 0.0625
-    //First Vector is Bottom Right of Texture, Second Vector is Bottom Left of Texture
-    //Third Vector is Top Right of Texture, Fourth Vector is Top Left of Texture.
+    // Texture Being Used is 512 x 512. 8x8 textures. 1/ = 0.125
+    //First UV is Bottom Right of Texture, Second UV is Bottom Left of Texture
+    //Third UV is Top Right of Texture, Fourth UV is Top Left of Texture.
+
     public static Vector2[,] blockUVs = {
-        /*GrassTop*/ {  new Vector2(0.0625f,0.9375f), new Vector2(0.125f,0.9375f),
-                        new Vector2(0.0625f, 1f), new Vector2(0.125f,1f) },
-        /*GrassSide*/ { new Vector2( 0f, 0.9375f ), new Vector2( 0.0625f, 0.9375f),
+
+        
+        /*GrassOnSide*/ { new Vector2( 0f, 0.9375f ), new Vector2( 0.0625f, 0.9375f),
                         new Vector2( 0f, 1.0f ),new Vector2( 0.0625f, 1.0f )},
+
+        /*GrassOnTop*/ {  new Vector2(0.0625f,0.9375f), new Vector2(0.125f,0.9375f),
+                        new Vector2(0.0625f, 1f), new Vector2(0.125f,1f) },
+
         /*Dirt*/	  { new Vector2( 0.125f, 0.9375f ), new Vector2( 0.1875f, 0.9375f),
                         new Vector2( 0.125f, 1.0f ),new Vector2( 0.1875f, 1.0f )},
-        /*Water*/	  { new Vector2(0.875f,0.125f),  new Vector2(0.9375f,0.125f),
-                        new Vector2(0.875f,0.1875f), new Vector2(0.9375f,0.1875f)},
+
         /*Stone*/	  { new Vector2( 0.1875f, 0.9375f ), new Vector2( 0.25f, 0.9375f),
-                        new Vector2( 0.1875f, 1f ),new Vector2( 0.25f, 1f )},
-        /*Sand*/	  { new Vector2(0.125f,0.875f),  new Vector2(0.1875f,0.875f),
-                        new Vector2(0.125f,0.9375f), new Vector2(0.1875f,0.9375f)},
-        /*Diamond*/ { new Vector2( 0.125f, 0.9375f ), new Vector2(0.1875f, 0.9375f),
-                      new Vector2(0.125f, 1.0f), new Vector2( 0.1875f, 1.0f )},
-         /*BedRock*/	  { new Vector2( 0.125f, 0.9375f ), new Vector2( 0.1875f, 0.9375f),
-                        new Vector2( 0.125f, 1.0f ),new Vector2( 0.1875f, 1.0f )},
+                        new Vector2( 0.1875f, 1f ),new Vector2( 0.25f, 1f )},       
+      
+        /*Iron*/      { new Vector2( 0.25f, 0.9375f ), new Vector2(0.3125f, 0.9375f),
+                      new Vector2(0.25f, 1.0f), new Vector2( 0.3125f, 1.0f )},
+
+        /*BedRock*/   { new Vector2( 0.3125f, 0.9375f ), new Vector2( 0.375f, 0.9375f),
+                      new Vector2( 0.3125f, 1.0f ),new Vector2( 0.375f, 1.0f )},
+
+        /*Air */      { new Vector2(0f,0f), new Vector2(0f,0f),
+                      new Vector2(0f, 0f), new Vector2(0,0f) },
 
     };
 
-    public static float fBm(float x, float z, int octaves, float scale, float heightScale, float heightOffset)
-    {
-        float total = 0;
-        float frequency = 1;
-        for (int i = 0; i < octaves; i++)
-        {
-            total += Mathf.PerlinNoise(x * scale * frequency, z * scale * frequency) * heightScale;
-            frequency *= 2;
-        }
-        return total + heightOffset;
-    }
+  
 
-    public static float fBm3D(float x, float y, float z, int octaves, float scale, float heightScale, float heightOffset)
-    {
-        float xy = fBm(x, y, octaves, scale, heightScale, heightOffset);
-        float xz = fBm(x, z, octaves, scale, heightScale, heightOffset);
-        float yx = fBm(y, x, octaves, scale, heightScale, heightOffset);
-        float yz = fBm(y, z, octaves, scale, heightScale, heightOffset);
-        float zx = fBm(z, x, octaves, scale, heightScale, heightOffset);
-        float zy = fBm(z, y, octaves, scale, heightScale, heightOffset);
-       
-        return (xy + yz + xz + yx + zy + zx) / 6.0f;
-    }
+   
 
 
     public static Mesh MergeMeshes(Mesh[] meshes) {
-        Mesh mesh = new Mesh();
+        Mesh blockMesh = new Mesh();
 
-        Dictionary<VertexData, int> pointsOrder = new Dictionary<VertexData, int>();
-        HashSet<VertexData> pointsHash = new HashSet<VertexData>();
-        List<int> triangles = new List<int>();
+        Dictionary<Data, int> verticesDictionary = new Dictionary<Data, int>(); // holds the names and values of the mesh  vertices 
+        HashSet<Data> verticesHash = new HashSet<Data>(); // similar to the Dictionary but no values are held by it. Only being used to decide wheter the a vertices is in the data structure
+        List<int> triangles = new List<int>(); //mesh triangles
 
-        int pIndex = 0;
-        for (int i = 0; i < meshes.Length; i++) //loop through each mesh
+        int verticesIndex = 0; //  current vertex
+
+        for (int i = 0; i < meshes.Length; i++) //loop through each mesh being passed through.
         {
-            if (meshes[i] == null) continue;
-            for (int j = 0; j < meshes[i].vertices.Length; j++) //loop through each vertex of the current mesh
+            if (meshes[i] == null) continue; // when no refernce to a mesh occurs.
+
+            for (int j = 0; j < meshes[i].vertices.Length; j++) //loops through each of the vertex in the  current mesh
             {
                 Vector3 Vertices = meshes[i].vertices[j];
                 Vector3 Normals = meshes[i].normals[j];
                 Vector2 Uvs = meshes[i].uv[j];
-                VertexData p = new VertexData(Vertices, Normals, Uvs);
-                if (!pointsHash.Contains(p)) {
-                    pointsOrder.Add(p, pIndex);
-                    pointsHash.Add(p);
 
-                    pIndex++;
+                Data vertexdata = new Data(Vertices, Normals, Uvs); // Creating new Data Structure and passing through the vertices, normlas and Uvs
+                if (!verticesHash.Contains(vertexdata)) 
+                {
+                    verticesDictionary.Add(vertexdata,verticesIndex);
+                    verticesHash.Add(vertexdata);
+
+                    verticesIndex++;
                 }
 
             }
 
-            for (int t = 0; t < meshes[i].triangles.Length; t++) {
+            for (int t = 0; t < meshes[i].triangles.Length; t++)
+            {
                 int triPoint = meshes[i].triangles[t];
-                Vector3 v = meshes[i].vertices[triPoint];
-                Vector3 n = meshes[i].normals[triPoint];
-                Vector2 u = meshes[i].uv[triPoint];
-                VertexData p = new VertexData(v, n, u);
+                Vector3 Vertices = meshes[i].vertices[triPoint];
+                Vector3 Normals = meshes[i].normals[triPoint];
+                Vector2 Uvs = meshes[i].uv[triPoint];
+                Data vertexdata = new Data(Vertices, Normals, Uvs);
 
                 int index;
-                pointsOrder.TryGetValue(p, out index);
+                verticesDictionary.TryGetValue(vertexdata, out index);
                 triangles.Add(index);
             }
             meshes[i] = null;
         }
 
-        ExtractArrays(pointsOrder, mesh);
-        mesh.triangles = triangles.ToArray();
-        mesh.RecalculateBounds();
-        return mesh;
+        ExtractArrays(verticesDictionary, blockMesh);
+        blockMesh.triangles = triangles.ToArray();
+        blockMesh.RecalculateBounds();
+        return blockMesh;
     }
 
-    public static void ExtractArrays(Dictionary<VertexData, int> list, Mesh mesh) {
+    public static void ExtractArrays(Dictionary<Data, int> list, Mesh blockMesh) {
         List<Vector3> verts = new List<Vector3>();
         List<Vector3> norms = new List<Vector3>();
         List<Vector2> uvs = new List<Vector2>();
 
-        foreach (VertexData v in list.Keys) {
-            verts.Add(v.Item1);
-            norms.Add(v.Item2);
-            uvs.Add(v.Item3);
+        foreach (Data vertices in list.Keys) {
+            verts.Add(vertices.Item1);
+            norms.Add(vertices.Item2);
+            uvs.Add(vertices.Item3);
         }
-        mesh.vertices = verts.ToArray();
-        mesh.normals = norms.ToArray();
-        mesh.uv = uvs.ToArray();
+        blockMesh.vertices = verts.ToArray();
+        blockMesh.normals = norms.ToArray();
+        blockMesh.uv = uvs.ToArray();
     }
 
 }
